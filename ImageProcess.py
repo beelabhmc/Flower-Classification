@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import ImageFilter
 import numpy
 from PIL import Image
@@ -28,18 +29,18 @@ def getSub(n, imageName, overlap):
  #  print(size)
     width = size[0] #pull out length and width 
     length = size[1] 
-   # subList = []
+
    #Initialize lists to hold metric results (for analysis later to test) 
     avgList = [] 
-  #  avgTimeL = []
+
     yellowList = [] 
-   # yellowTimeL = []
+
     varList = [] 
-    #varTimeL = []
+
     edgeList = [] 
-    #edgeTimeL = []
+
     textList = []
-    #textTimeL = []
+
     
     smallTileSize = int(overlap*n)
     
@@ -72,13 +73,16 @@ def getSub(n, imageName, overlap):
             texture = textureAnalysis(newImage) 
             #textTime = time.time() - edgeTime - start
             #textTimeL += [textTime]
-      
+            
+            (contrast, dissim, homog, energy, corr, ASM) =  GLCM(newImage)
+            
             avgList += [avg] 
             yellowList += [yellow] 
             varList += [var] 
             edgeList += [edges]
             textList += [texture]
-            Metrics = (avg[0], avg[1], avg[2], yellow, var, edges, texture) #store metrics
+            
+            Metrics = (avg[0], avg[1], avg[2], yellow, var, edges, texture, contrast, dissim, homog, energy, corr, ASM) #store metrics
             
             MetricDict[(i,j)] = Metrics
 
@@ -203,14 +207,14 @@ def trainMetrics(imageName, density):
     edges = countEdgePixels(image) 
     var = colorVariance(image) 
     texture = textureAnalysis(image) 
-    
-    metrics = [avg[0], avg[1], avg[2], yellow, var, edges, texture] 
+    (contrast, dissim, homog, energy, corr, ASM) =  GLCM(newImage)
+    metrics = [avg[0], avg[1], avg[2], yellow, var, edges, texture, contrast, dissim, homog, energy, corr, ASM] 
     return [metrics, density] 
     
 def allTrainMetrics(imageList, densityList): 
     metricsList = []
-   # print 'images ', imageList 
-   # print 'densityList ', densityList
+    print 'images ', imageList 
+    print 'densityList ', densityList
     for i in range(len(imageList)): 
         imageName = imageList[i]
         #currentIm = Image.open(imageName) 
@@ -236,8 +240,8 @@ def trainMetricsTransect(image, density):
     metrics = [avg[0], avg[1], avg[2], yellow, var, edges, texture] 
     return [metrics, density]  
           
-#Start of helper functions for computing metrics. 
-    
+######################Start of helper functions for computing features. ##################################
+#########################################################################################################   
 def colorAvg(im): 
     """Takes in a string containing an image file name, returns the average red, blue, and green 
         values for all the pixels in that image.""" 
@@ -357,3 +361,15 @@ def findYellowFast(im):
     
 def getHSV((r,g,b)): 
     return rgb_to_hsv(r/255., g/255., b/255.)
+    
+def GLCM(im):
+    glcm = greycomatrix(im, [10], [0])
+    #Compute all of the grey co occurrence features. 
+    contrast = greycoprops(glcm, 'contrast')[0][0]
+    dissim = greycoprops(glcm, 'dissimilarity')[0][0]
+    homog = greycoprops(glcm, 'homogeneity')[0][0]
+    energy = greycoprops(glcm, 'energy')[0][0]
+    corr = greycoprops(glcm, 'correlation')[0][0]
+    ASM = greycoprops(glcm, 'ASM')[0][0]
+    
+    return list(contrast, dissim, homog, energy, corr, ASM)

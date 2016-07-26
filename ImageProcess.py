@@ -14,7 +14,7 @@ from MachineLearning import *
 
 #Global Variables. 
 
-NUMBERMETRICS = 7 
+NUMBERMETRICS = 13
 #from multiprocessing import Pool   ##Hopefully figure this out - used for multithreading 
 
 #Extract all nxn rectangles from an image (these will be processed then used as inputs for ML algorithm). 

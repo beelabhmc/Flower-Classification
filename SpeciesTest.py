@@ -6,6 +6,8 @@ from SpeciesClass import *
 from Verification import *
 from sklearn.feature_selection import VarianceThreshold
 from sklearn.feature_selection import SelectKBest
+
+
 def SpeciesTest():
     
     #input a training set - list of metrics and the corresponding species. The 2 lists must be the same length. 
@@ -22,7 +24,7 @@ def SpeciesTest():
     #
     #
     #metricTrain, speciesTrain = allTrainMetrics(imageList, speciesList)
-    if 0:
+    if 1:
         FullImList, FullSpeciesList = createAllTransectTraining()
         metricTrain, speciesTrain = allTrainMetrics(FullImList, FullSpeciesList) #get training metrics 
         
@@ -35,7 +37,7 @@ def SpeciesTest():
         f = open('TransectSpeciesTraining.txt', 'w')
         print >> f, list(speciesTrain)
         f.close()
-    if 1: 
+    if 0: 
         f = open('TransectMetricTraining.txt', 'r') 
         data = f.read() 
         metricTrain = eval(data) 
@@ -44,7 +46,7 @@ def SpeciesTest():
         data = g.read() 
         speciesTrain = eval(data) 
     scaledMetrics, scaler = scaleMetrics(metricTrain) #scale the metrics and return both the scaled metrics and the scaler used. 
-    kbest = SelectKBest(k=3) 
+    kbest = SelectKBest(k=13) 
     newMetrics = kbest.fit_transform(scaledMetrics, speciesTrain)
     
     clf = classifyTree(newMetrics, speciesTrain) #Fit a function 

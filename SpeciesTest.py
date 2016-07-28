@@ -24,49 +24,6 @@ def SpeciesTest():
     #
     #
     #metricTrain, speciesTrain = allTrainMetrics(imageList, speciesList)
-    if 1:
-        FullImList, FullSpeciesList = createAllTransectTraining()
-        metricTrain, speciesTrain = allTrainMetrics(FullImList, FullSpeciesList) #get training metrics 
-        
-        ### Save the training set  - metrics
-        f = open('TransectMetricTraining.txt', 'w')
-        print >> f, list(metricTrain)
-        f.close()
-                
-        ### Save the training set - densities 
-        f = open('TransectSpeciesTraining.txt', 'w')
-        print >> f, list(speciesTrain)
-        f.close()
-    if 0: 
-        f = open('TransectMetricTraining.txt', 'r') 
-        data = f.read() 
-        metricTrain = eval(data) 
-        
-        g = open('TransectSpeciesTraining.txt', 'r') 
-        data = g.read() 
-        speciesTrain = eval(data) 
-    scaledMetrics, scaler = scaleMetrics(metricTrain) #scale the metrics and return both the scaled metrics and the scaler used. 
-    kbest = SelectKBest(k=13) 
-    newMetrics = kbest.fit_transform(scaledMetrics, speciesTrain)
-    
-    clf = classifyTree(newMetrics, speciesTrain) #Fit a function 
-    clf.feature_importances_
-    
-    tileSize = 100 
-    overlap = 0.2
-    classifyMap(clf, speciesTrain, newMetrics, scaler, imageName, tileSize, overlap, kbest)
-    
-    
-    #classifyMapProb(clf, speciesTrain, metricTrain,scaler, 1) #Map the probabilities! 
-    
-    plt.show()
-
-def testFeatures(thresh, kfeatures): 
-    """Test the features you are using to determine if they are valuable to actual classification.""" 
-    
-    #First determine which features have very low variance across the training set. 
-    sel = VarianceThreshold(threshold = thresh)
-
     if 0:
         FullImList, FullSpeciesList = createAllTransectTraining()
         metricTrain, speciesTrain = allTrainMetrics(FullImList, FullSpeciesList) #get training metrics 
@@ -88,9 +45,48 @@ def testFeatures(thresh, kfeatures):
         g = open('TransectSpeciesTraining.txt', 'r') 
         data = g.read() 
         speciesTrain = eval(data) 
+    scaledMetrics, scaler = scaleMetrics(metricTrain) #scale the metrics and return both the scaled metrics and the scaler used. 
+    kbest = SelectKBest(k=5) 
+    newMetrics = kbest.fit_transform(scaledMetrics, speciesTrain)
+    
+    clf = classifyTree(newMetrics, speciesTrain) #Fit a function 
+    clf.feature_importances_
+    
+    tileSize = 100 
+    overlap = 0.2
+    classifyMap(clf, speciesTrain, newMetrics, scaler, imageName, tileSize, overlap, kbest)
         
-        scaledMetrics, scaler = scaleMetrics(metricTrain)
+    plt.show()
+
+def testFeatures(thresh, kfeatures): 
+    """Test the features you are using to determine if they are valuable to actual classification.""" 
+    
+    #First determine which features have very low variance across the training set. 
+    sel = VarianceThreshold(threshold = thresh)
+
+    if 1:
+        FullImList, FullSpeciesList = createAllTransectTraining()
+        metricTrain, speciesTrain = allTrainMetrics(FullImList, FullSpeciesList) #get training metrics 
         
+        ### Save the training set  - metrics
+        f = open('TransectMetricTraining.txt', 'w')
+        print >> f, list(metricTrain)
+        f.close()
+                
+        ### Save the training set - densities 
+        f = open('TransectSpeciesTraining.txt', 'w')
+        print >> f, list(speciesTrain)
+        f.close()
+    if 0: 
+        f = open('TransectMetricTraining.txt', 'r') 
+        data = f.read() 
+        metricTrain = eval(data) 
+         
+        g = open('TransectSpeciesTraining.txt', 'r') 
+        data = g.read() 
+        speciesTrain = eval(data) 
+        
+    scaledMetrics, scaler = scaleMetrics(metricTrain)
     sel.fit(metricTrain) #check the variance on metrics prior to scaling. 
     threshIndex = sel.get_support()
     

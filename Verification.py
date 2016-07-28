@@ -1,6 +1,4 @@
 #Import the thing syou need here. 
-import numpy as np 
-import matplotlib 
 from MachineLearning import * 
 from FullProgram import * 
 from ImageProcess import * 
@@ -10,12 +8,9 @@ from classification import *
 from sklearn.metrics import classification_report
 
 def GetTrainingMetrics(imageName, trainingType, densityList): 
-    """Calculates metrics on a training set to be used later."""
-    k=10 #set the number of folds for the verification. Generally set to 10-fold but could be changed based on further research 
+    """Calculates or reads in pre calculated metrics on a training set to be used later."""
     
     #Get the training data 
-    image = Image.open(imageName)
-    imageSize = image.size
     
     #trainingType: 0 = transect 
     #              1 = picList 
@@ -76,11 +71,15 @@ def GetTrainingMetrics(imageName, trainingType, densityList):
         data = g.read()
         densityList = eval(data)
         
-    return metricList
+    return metricList #return the claculated or read in training metrics. 
     
     
-def VerifyTenfold(densityList, metricList, estimator): 
-    """Verification process using K-fold verification to test the accuracy of the algorithm.""" 
+def VerifyTenfold(speciesList, metricList, estimator): 
+    """Verification process using K-fold verification to test the accuracy of the algorithm.
+    Takes in speciesList, the training species classes. 
+    metricList, the training image metrics. 
+    Estimator, a trained classification estimator. """ 
+    
     #First, we need an estimator. 
     k = 10 #set the number of cross-validations (k)
     #estimator = SVR( kernel = 'rbf', gamma = 0.05, epsilon = 0.4) #Create an instance of the SVR estimator 
@@ -93,7 +92,7 @@ def VerifyTenfold(densityList, metricList, estimator):
     
     #Use the full set for testing 
     M_train = metricList 
-    d_train = densityList
+    d_train = speciesList
     
     #M_train is the training set of metrics, d_train is the training set of densities
     #M_test is the metrics reserved for testing, d_test is the corresponding densities. 
@@ -105,7 +104,13 @@ def VerifyTenfold(densityList, metricList, estimator):
     return scores
     
 def classReport(metricTrain, speciesTrain, clf): 
-    from sklearn.metrics import classification_report
-    y_true = speciesTrain
-    y_pred = clf.predict(metricTrain)
-    print(classification_report(y_true, y_pred))
+    """Produces a report on how well an estimator performs on each class."""
+    y_true = speciesTrain #This is the actual classes 
+    y_pred = clf.predict(metricTrain) #The classes predicted by the classifier. 
+    print(classification_report(y_true, y_pred)) #print out the full report of performance by class. 
+
+
+def featOrder(imps): 
+    """Sort the importance list to return the feature numbers by order of importance.""" 
+    #return sorted(range(len(imps)), key = lambda k:imps[k])
+    return [i+1 for i in numpy.argsort(imps)]

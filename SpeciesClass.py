@@ -49,27 +49,25 @@ def allSpeciesOverlap(n, imageName, overlap,fit, scaler, reduceFeatures, feature
     return allSpecies #return one map of species and one map of the corresponding probability. 
 
 def SpeciesMapShort(species,imageName, overlap, n):
+    """Similar to denseMapShort except it produces a map for species."""
     image = Image.open(imageName) #open the image
-    imageSize = image.size
-    overlapSize = int(overlap*n)
+    imageSize = image.size #get the image size. 
+    overlapSize = int(overlap*n)#Figure out how many pixels to shift by. 
     width = imageSize[0] 
     height = imageSize[1] 
-    rowTiles = int((width-n)/(overlapSize))+1
+    rowTiles = int((width-n)/(overlapSize))+1 #calculate the number of tiles in a row. 
         
-    pointsx = [] #find the points where species was determined
+    pointsx = [] #initialize empty lists to hold the point location data. 
     pointsy = []
-    for i in range(len(species)):
+    for i in range(len(species)):  #find the points where species was determined
         x = (i%rowTiles)*overlapSize + n/2
         y = (i/rowTiles)*overlapSize + n/2
         pointsx += [x]
         pointsy += [y]
-    pointsx = numpy.array(pointsx)
+    pointsx = numpy.array(pointsx) #convert points to numpy arrays for future operations. 
     pointsy = numpy.array(pointsy)
-    #print(points)
-
     #interpolation
-    #points = tuple(points) #Convert array to numpy array. 
-    grid_x, grid_y = numpy.mgrid[0:width, 0:height]
+    grid_x, grid_y = numpy.mgrid[0:width, 0:height] #create a grid to interpolate over.
 
    # print(species)
     species = numpy.array(species)
@@ -77,17 +75,25 @@ def SpeciesMapShort(species,imageName, overlap, n):
     
     #Plotting stuff
     #v = numpy.linspace(min(species), max(species), (max(species) - min(species)), endpoint=True)
-    fig = plt.contourf(grid_x, grid_y, data, alpha = 0.6, antialiased = True)
+    fig = plt.contourf(grid_x, grid_y, data, alpha = 0.6, antialiased = True) #Plot the data overlaid with the orignial image. 
 
     
     mapIm = Image.open(imageName)
     plt.imshow(mapIm)
-    x = plt.colorbar(fig)
-    plt.savefig('USS_June7_Classes.jpg')
+    x = plt.colorbar(fig) #show the colorbar
+    plt.savefig(imageName + '_Classes.jpg') #Save the figure. Change the name here or rename the file after it has been saved. 
 
 def classifyMap(classifier, densityList, metricList,scaler,imageName, tileSize, overlap, featureSelect):
+    """Classify map calculates all of the species classes for an image and produces a map 
+    of those species overlaid with the original map.
+    classifier - a trained classification algorithm. 
+    metricList - the list of training metrics (list) 
+    scaler - the scaler used to scale the data 
+    imageName - the name of the image to analyse (string) 
+    tileSize - the desired size of tile to use in calcualting metrics (int)
+    overlap - how much the tiles should overlap with each other
+    featureSelect -  the test algorithm that will select which features to use. Only relevant if reduceFeatures is 1. """
     reduceFeatures = 1 #reduce the number of features if 1, if 0 use all features.
-    Species = allSpeciesOverlap(tileSize, imageName, overlap,classifier, scaler, reduceFeatures, featureSelect)
-  #  print(Species)
-    SpeciesMapShort(Species, imageName, overlap, tileSize) 
-    return
+    Species = allSpeciesOverlap(tileSize, imageName, overlap,classifier, scaler, reduceFeatures, featureSelect) #Find all of the species classes. 
+    SpeciesMapShort(Species, imageName, overlap, tileSize) #Display the map. 
+    return Species #return the calculated species so that they can be analyzed for other purposes, i.e. clustering, etc. 

@@ -4,19 +4,32 @@ import numpy
 from PIL import Image
 from PIL import ImageStat
 from colorsys import * 
-import time
 from operator import add
 from sklearn import preprocessing
-#from skimage import data
-
+from skimage.feature import greycomatrix, greycoprops
 from MachineLearning import * 
-
+import matplotlib 
+from scipy.stats import skew 
 
 #Global Variables. 
 
-NUMBERMETRICS = 13
-#from multiprocessing import Pool   ##Hopefully figure this out - used for multithreading 
+NUMBERMETRICS = 19 #change the number of metrics used here. 
 
+#############Calculating metrics ############################################
+#############################################################################
+
+def getMetrics(image):
+    """Takes in a PIL image and outputs all of the metrics on that image in a list."""  
+    avg = colorAvg(image) 
+    yellow = findYellowFast(image) 
+    edges = countEdgePixels(image) 
+    var = colorVariance(image) 
+    texture = textureAnalysis(image) 
+    (contrast, dissim, homog, energy, corr, ASM) =  GLCM(image)
+    (Hstd, Sstd, Vstd, Hskew, Sskew, Vskew) = colorMoment(image)
+    metrics = [avg[0], avg[1], avg[2], yellow, var, edges, texture, contrast, dissim, homog, energy, corr, ASM, Hstd, Sstd, Vstd, Hskew, Sskew, Vskew]
+    return metrics 
+    
 #Extract all nxn rectangles from an image (these will be processed then used as inputs for ML algorithm). 
 def getSub(n, imageName, overlap): 
     """Takes in n, an integer less than or equal to the minimum dimension of the image 
@@ -26,22 +39,9 @@ def getSub(n, imageName, overlap):
     image = Image.open(imageName) #load in the image.
     #Find the size of the image. 
     size = image.size
- #  print(size)
     width = size[0] #pull out length and width 
     length = size[1] 
 
-   #Initialize lists to hold metric results (for analysis later to test) 
-    avgList = [] 
-
-    yellowList = [] 
-
-    varList = [] 
-
-    edgeList = [] 
-
-    textList = []
-
-    
     smallTileSize = int(overlap*n)
     
     MetricDict = {} #initialize empty dict. 
@@ -50,67 +50,31 @@ def getSub(n, imageName, overlap):
         for j in range(0, length - int(overlap*n), int(overlap*n)): 
             box = (i,j,i+smallTileSize, j+smallTileSize)  #edge coordinates of the next rectangle. 
             newImage = image.crop(box) #pull out the desired rectangle
-        #    subList += [newImage] #More efficient way to store each image? 
             ### METRIC CALCULATIONS - Time counters commented out for now. 
 
-           # start = time.time()
-            avg = colorAvg(newImage) 
-          #  avgTime = time.time() - start 
-           # avgTimeL += [avgTime]
-           
-            yellow = findYellowFast(newImage)
-            #yellowTime = time.time() - avgTime - start
-            #yellowTimeL += [yellowTime]
-         
-            var = colorVariance(newImage) 
-            #varTime = time.time() - yellowTime - start
-            #varTimeL += [varTime]
-         
-            edges = countEdgePixels(newImage)
-            #edgeTime = time.time() - varTime - start
-            #edgeTimeL += [edgeTime]
-           
-            texture = textureAnalysis(newImage) 
-            #textTime = time.time() - edgeTime - start
-            #textTimeL += [textTime]
-            
-            (contrast, dissim, homog, energy, corr, ASM) =  GLCM(newImage)
-            
-            avgList += [avg] 
-            yellowList += [yellow] 
-            varList += [var] 
-            edgeList += [edges]
-            textList += [texture]
-            
-            Metrics = (avg[0], avg[1], avg[2], yellow, var, edges, texture, contrast, dissim, homog, energy, corr, ASM) #store metrics
-            
-            MetricDict[(i,j)] = Metrics
-
-   # return avgList, yellowList, varList, edgeList, textList, avgTimeL, yellowTimeL, varTimeL, edgeTimeL, textTimeL
+            Metrics = getMetrics(newImage) #calculate all of the metrics on this cropped out image. 
+            MetricDict[(i,j)] = Metrics #add these metrics to the metric dictionary with the upper left coordinates as the key. 
     return MetricDict
     
 def allMetrics(dictionary,n, im, overlap): 
     """Takes in a dictionary of results from small tiles and calculates average metrics 
     	for a larger tile of size n, in image im, with overlap percentage im."""
     width, height = im.size 
-  #  print dictionary
-    #FinalMetricDict = {}
-   # numberMetrics = 7 #Change for diff number of metrics as we add more. Changed to global variable . 
     overlapSize = int(overlap*n)
     numberTiles = int((width-n)/(overlapSize)+1)*int(((height-n)/(overlapSize))+1)
     metricArray = numpy.zeros((NUMBERMETRICS, numberTiles))
     
-    for i in range(0,width - n, int(overlap*n)): 
-        for j in range(0,height- n, int(overlap*n)): 
-            #you're at the start of a box 
+    for i in range(0,width - n, overlapSize): 
+        for j in range(0,height- n, overlapSize): 
+            #you're at the start of a box
             metricTotals = len(dictionary[(0,0)])*[0.0]
             ##Adding up metrics from small tiles 
-            for k in range(i,i+n-int(overlap*n)+1, int(overlap*n)): 
-                for m in range(j, j+n-int(overlap*n)+1, int(overlap*n)): 
+            for k in range(i,i+n-overlapSize+1, overlapSize): 
+                for m in range(j, j+n-overlapSize+1, overlapSize): 
                     #pull out metrics 
                     metrics = dictionary[(k,m)]
                     #print metrics 
-                    metricTotals = map(add, metricTotals, metrics)
+                    metricTotals = map(add, metricTotals, metrics) 
             ##Averaging metrics 
             num = 1/(overlap**2)
             newMetric = [a/num for a in metricTotals]
@@ -119,7 +83,6 @@ def allMetrics(dictionary,n, im, overlap):
             for index in range(len(metricTotals)): 
                 metricArray[index,int(i/(overlap*n) + j*(width-n)/((overlap*n)**2))] = newMetric[index] 
     #print metricArray 
-    #raw_input('Huh?')
     return metricArray 
                 
 def calcMetrics(imageName, tileSize, overlap): 
@@ -127,8 +90,7 @@ def calcMetrics(imageName, tileSize, overlap):
         returns an array containing metric vectors in order by coordinates 
         of the upper left hand of the tile desired. Also returns a scalar object 
         for scaling future input data. """ 
-        
-  #  NUMBERMETRICS = 7 changed to global variable . 
+
     im = Image.open(imageName)
     subDict = getSub(tileSize, imageName, overlap)  #Get a dictionary of metrics for small tiles
     finalMetrics = allMetrics(subDict, tileSize, im, overlap, NUMBERMETRICS) #calculate metrics on larger tiles  
@@ -153,7 +115,6 @@ def scaleMetrics(metricArray):
     scaledArray = scaler.transform(metricArray) 
     return scaledArray, scaler 
 
-
 #######################Debugging Functions############################# 
 
 
@@ -170,10 +131,8 @@ def oneDensOverlap((i,j), n, imageName, overlap, subTileDict, fit, scaler):
            # print (k,m)
             newMetrics = subTileDict[(i + m*shiftSize, j + k*shiftSize)]
             metricTotal = map(add, metricTotal, newMetrics)
-  #  print metricTotal
     num = 1/(overlap**2)
     avgMetric = [a/num for a in metricTotal] #Compute the average 
-   # print avgMetric
     scaledMetric = scaler.transform(avgMetric) #Scale the metric 
     density = fit.predict(scaledMetric) 
     return list(density)
@@ -184,7 +143,6 @@ def allDensOverlap(n, imageName, overlap, densityList, metricList, fit, scaler):
     imageSize = image.size 
     width = imageSize[0]
     height = imageSize[1] 
-   # densityList = []
     
     subTileDict = getSub(n, imageName, overlap) #Compute the metrics on subtiles 
 
@@ -192,7 +150,6 @@ def allDensOverlap(n, imageName, overlap, densityList, metricList, fit, scaler):
     shiftSize = int(n*overlap)
     for k in range(0, height -n, shiftSize): 
         for m in range(0, width - n, shiftSize): 
-          #  print (m,k)
             currentDensity = oneDensOverlap((m,k), n, imageName, overlap, subTileDict, fit, scaler)
             allDensities += currentDensity
     return allDensities 
@@ -201,64 +158,47 @@ def allDensOverlap(n, imageName, overlap, densityList, metricList, fit, scaler):
 ######TRAINING SET CALCULATIONS#########################
 
 def trainMetrics(imageName, density): 
-    image = Image.open(imageName) 
-    avg = colorAvg(image) 
-    yellow = findYellowFast(image) 
-    edges = countEdgePixels(image) 
-    var = colorVariance(image) 
-    texture = textureAnalysis(image) 
-    (contrast, dissim, homog, energy, corr, ASM) =  GLCM(newImage)
-    metrics = [avg[0], avg[1], avg[2], yellow, var, edges, texture, contrast, dissim, homog, energy, corr, ASM] 
+    """Simple helper function. Opens the input image and calculates metrics on it. Then returns the metrics and associated data."""
+    image = Image.open(imageName)  #open the relevant image as a PIL image. 
+    metrics = getMetrics(image) #get all of the metrics calculated on this image. 
     return [metrics, density] 
     
 def allTrainMetrics(imageList, densityList): 
+    """Similar to train metrics, but takes in a series of images stored in a list and calculates metrics for all of them."""
     metricsList = []
     print 'images ', imageList 
     print 'densityList ', densityList
     for i in range(len(imageList)): 
         imageName = imageList[i]
-        #currentIm = Image.open(imageName) 
         [metrics, density] = trainMetrics(imageName, densityList[i]) 
         metricsList += [metrics] 
     return metricsList, densityList
     
 def allTrainMetricsTransect(imageList, densityList):  
+    """takes in a list of images from a transect and calculates metrics for them. 
+    Outputs a list of metrics and a list of the associated data."""
     metricsList = []
-    for i in range(len(imageList)): 
-        image = imageList[i]
-        [metrics, density] = trainMetricsTransect(image, densityList[i]) 
-        metricsList += [metrics] 
-    return metricsList, densityList  
+    for i in range(len(imageList)): #for all of the training images. 
+        image = imageList[i] #pull out the next one. 
+        metrics = getMetrics(image) #get the metrics for this image. 
+        metricsList += [metrics] #add to the full metric list. 
+    return metricsList, densityList  #return an ordered list of metrics and corresponding density or species. 
     
-def trainMetricsTransect(image, density): 
-    avg = colorAvg(image) 
-    yellow = findYellowFast(image) 
-    edges = countEdgePixels(image) 
-    var = colorVariance(image) 
-    texture = textureAnalysis(image) 
-    
-    metrics = [avg[0], avg[1], avg[2], yellow, var, edges, texture] 
-    return [metrics, density]  
           
 ######################Start of helper functions for computing features. ##################################
 #########################################################################################################   
 def colorAvg(im): 
     """Takes in a string containing an image file name, returns the average red, blue, and green 
         values for all the pixels in that image.""" 
-    #im = Image.open(imageName) 
     imStats = ImageStat.Stat(im) 
     (redAv, greenAv, blueAv) = imStats.mean
     return redAv, greenAv, blueAv
     
-    
-
-  #rgb_to_hsv(r/255.,g/255.,b/255.)  converts pixel coords to HSV coords 
 
 def colorVariance(im):
-    ''' calculates the diversity in color using a hue histogram'''
+    '''Calculates the diversity in color using a hue histogram'''
     
     # load image pixels
-    #im = Image.open(imageName)
     pix = im.load()
     width, height = im.size
     
@@ -284,9 +224,7 @@ def countEdgePixels(im):
     threshold = 150 
     
     # open image and filter
-    #im = Image.open(imageName)
     im2 = im.filter(ImageFilter.FIND_EDGES)
-    #im2.save("Filtered.jpg")
     im2 = im2.convert("L")
 	
     # load pixels and count edge pixels
@@ -306,7 +244,6 @@ def textureAnalysis(im):
     n = 7
     
     # open image
-    #im = Image.open(imageName)
     width, height = im.size
     
     # loop across image
@@ -329,7 +266,7 @@ def textureAnalysis(im):
                 
     # calculate the percentage of high texture grids
     
-    if width/n == 0: 
+    if width/n == 0: #if width is less than n something is wrong! Check the width and make sure n is a reasonable value. 
         print width
         raw_input('Oops')
     return float(count)/((width/n)*(height/n))
@@ -356,20 +293,68 @@ def findYellowFast(im):
             count += 1
     totalPix = width*height 
     portion = float(count)/totalPix
-    #print(portion)
     return portion
     
 def getHSV((r,g,b)): 
     return rgb_to_hsv(r/255., g/255., b/255.)
     
 def GLCM(im):
-    glcm = greycomatrix(im, [10], [0])
+    """Calculate the grey level co-occurrence matrices and output values for 
+    contrast, dissimilarity, homogeneity, energy, correlation, and ASM in a list"""
+    
+    newIm = im.convert('L') #Conver to a grey scale image
+    glcm = greycomatrix(newIm, [5], [0]) #calcualte the glcm  
+    
     #Compute all of the grey co occurrence features. 
     contrast = greycoprops(glcm, 'contrast')[0][0]
+    if numpy.isnan(contrast): #Make sure that no value is recorded as NAN. 
+        contrast = 0 #if it is replace with 0. 
     dissim = greycoprops(glcm, 'dissimilarity')[0][0]
+    if numpy.isnan(dissim): 
+        dissim = 0
     homog = greycoprops(glcm, 'homogeneity')[0][0]
+    if numpy.isnan(homog): 
+        homog = 0
     energy = greycoprops(glcm, 'energy')[0][0]
+    if numpy.isnan(energy): 
+        energy = 0
     corr = greycoprops(glcm, 'correlation')[0][0]
+    if numpy.isnan(corr): 
+        corr = 0
     ASM = greycoprops(glcm, 'ASM')[0][0]
+    if numpy.isnan(ASM): 
+        ASM = 0
+    return numpy.concatenate(([contrast], [dissim], [homog], [energy], [corr], [ASM]), 0) #concatenate into one list along axis 0 and return 
     
-    return list(contrast, dissim, homog, energy, corr, ASM)
+def colorMoment(im): 
+    """Calculates the 2nd and 3rd color moments of the input image and returns values in a list."""
+    #The first color moment is the mean. This is already considered as a metric for 
+    #the red, green, and blue channels, so this is not included here. 
+    #Only the 2nd and 3rd moments will be calculated here. 
+    
+    newIm = matplotlib.colors.rgb_to_hsv(im) #convert to HSV space 
+     
+    #Pull out each channel from the image to analyze seperately. 
+    HChannel = newIm[:,:,0]
+    SChannel = newIm[:,:,1]
+    VChannel = newIm[:,:,2]
+    
+    #2nd moment = standard deviation. 
+    Hstd = numpy.std(HChannel) 
+    Sstd = numpy.std(SChannel) 
+    Vstd = numpy.std(VChannel) 
+    
+    #3rd Moment = "Skewness". Calculate the skew, which gives an array.
+    #Then take the mean of that array to get a single value for each channel. 
+    Hskew = numpy.mean(skew(HChannel))
+    Sskew = numpy.mean(skew(SChannel))
+    Vskew = numpy.mean(skew(VChannel))
+    
+    
+    return [Hstd, Sstd, Vstd, Hskew, Sskew, Vskew] #return all of the metrics. 
+    
+    
+    
+    
+    
+    

@@ -8,6 +8,7 @@ def createTraining(locations, species):
     return training
     
 def createImList(transectName, numPics): 
+    """Create a list of image names for a give transect so that they can easily be read in.""" 
     imList = []
     for i in range(numPics):
         currentPic = str(transectName) + str(i+1) + ".jpg"
@@ -16,7 +17,12 @@ def createImList(transectName, numPics):
     
     
 def numericalSpecies(species): 
-    """Change the species from scientific names into corresponding numbers to be used in classification.""" 
+    """Change the species from scientific names into corresponding numbers to be used in classification.
+    This is necessary because not all algorithms support non-numerical class labels. In order to 
+    test multiple algorithms and to have code that can easily be modified to use new algorithms, 
+    class labels are integers rather than strings, as this extends more easily across algs.
+    
+    species: the list of string class labels""" 
     newSpecies = range(len(species))
     for i in range(len(species)): #for each species listed 
         currentSpecies = species[i]

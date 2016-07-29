@@ -6,6 +6,7 @@ from DensityAlignment import *
 from sklearn import cross_validation
 from classification import *
 from sklearn.metrics import classification_report
+from sklearn.feature_selection import SelectKBest
 
 def GetTrainingMetrics(imageName, trainingType, densityList): 
     """Calculates or reads in pre calculated metrics on a training set to be used later."""
@@ -93,12 +94,20 @@ def VerifyTenfold(speciesList, metricList, estimator):
     #Use the full set for testing 
     M_train = metricList 
     d_train = speciesList
+    for i in range(len(d_train)): 
+        if d_train[i] > 2: 
+            d_train[i] = 0 
+    
+    scaledMetrics, scaler = scaleMetrics(M_train)
+    kbest = SelectKBest(k=18) 
+    kbest.fit(M_train, d_train)
+    est = classifyTree(M_train, d_train)
     
     #M_train is the training set of metrics, d_train is the training set of densities
     #M_test is the metrics reserved for testing, d_test is the corresponding densities. 
     
     #Use the data set aside for training in a cross validation test. 
-    scores = cross_validation.cross_val_score(estimator, M_train, d_train, cv = k)
+    scores = cross_validation.cross_val_score(est, M_train, d_train, cv = k)
 
     
     return scores
@@ -114,3 +123,43 @@ def featOrder(imps):
     """Sort the importance list to return the feature numbers by order of importance.""" 
     #return sorted(range(len(imps)), key = lambda k:imps[k])
     return [i+1 for i in numpy.argsort(imps)]
+    
+    
+def testFeatures(thresh, kfeatures): 
+    """Test the features you are using to determine if they are valuable to actual classification.""" 
+    
+    #First determine which features have very low variance across the training set. 
+    sel = VarianceThreshold(threshold = thresh)
+
+    if 1:
+        FullImList, FullSpeciesList = createAllTransectTraining()
+        metricTrain, speciesTrain = allTrainMetrics(FullImList, FullSpeciesList) #get training metrics 
+        
+        ### Save the training set  - metrics
+        f = open('TransectMetricTraining.txt', 'w')
+        print >> f, list(metricTrain)
+        f.close()
+                
+        ### Save the training set - densities 
+        f = open('TransectSpeciesTraining.txt', 'w')
+        print >> f, list(speciesTrain)
+        f.close()
+    if 0: 
+        f = open('TransectMetricTraining.txt', 'r') 
+        data = f.read() 
+        metricTrain = eval(data) 
+         
+        g = open('TransectSpeciesTraining.txt', 'r') 
+        data = g.read() 
+        speciesTrain = eval(data) 
+        
+    scaledMetrics, scaler = scaleMetrics(metricTrain)
+    sel.fit(metricTrain) #check the variance on metrics prior to scaling. 
+    threshIndex = sel.get_support()
+    
+    ##Now, seperately, select the K best features 
+    #Use the scaled metrics because this is what we will actually train with. 
+    kbest = SelectKBest(k=kfeatures) 
+    kbest.fit(scaledMetrics, speciesTrain)
+    bestIndex = kbest.get_support()
+    return metricTrain, threshIndex, bestIndex

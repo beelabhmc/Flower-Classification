@@ -63,7 +63,6 @@ def getClassifier():
     that data, and returns the resulting fit function."""
     densityList = makeDensList()
 
-    
     NUMPICS = 50  ##Change the number of training pictures here. 
     imageList = makePicList(NUMPICS)
     #imageList += ['TreeTrain1.jpeg', 'TreeTrain2.jpeg', 'TreeTrain3.jpeg', 'TreeTrain4.jpeg', 'TreeTrain5.jpeg', 'TreeTrain6.jpeg', 'Grass1.jpg', 'Path1.jpg', 'Buckwheat.jpeg', 'Buckwheat2.jpeg', 'Buckwheat3.jpeg']

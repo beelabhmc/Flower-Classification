@@ -1,6 +1,7 @@
 import numpy
 from createTraining import * 
 from DensityAlignment import *
+from Constants import *
 from ast import literal_eval as make_tuple
 import csv
 #BSSA June 3 
@@ -163,7 +164,7 @@ def createAllResearchTraining():
                 if row[2] == '' or row[3] == '' or row[4] == '' or row[5] == '' or row[7] == '': 
                     print('missing information')
                 else: 
-                    imageNames += [row[2] + '.jpg'] 
+                    imageNames += [IMAGE_PATH + row[2] + '.jpg']
                     tupleLeft = make_tuple('(' + row[3] + ')')
                     CoordLeft += [tupleLeft]
                     tupleRight = make_tuple('(' + row[4] + ')')

@@ -1,4 +1,5 @@
 from ImageProcess import * #Import the same functions from image process for density stuff. 
+from Constants import *
 
 def oneSpeciesOverlap((i,j), n, imageName, overlap, subTileDict, fit, scaler): 
     """Computes the density of one tile with overlap""" 

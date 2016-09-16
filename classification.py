@@ -8,7 +8,7 @@ from sklearn.linear_model import SGDClassifier
 from sklearn.linear_model import Perceptron
 from sklearn import tree 
 from sklearn.ensemble import RandomForestClassifier 
-
+from sklearn import grid_search
 
 
 def classifyRF(metrics, classes): 
@@ -40,8 +40,6 @@ def classifySGD(metrics, classes):
     clf = SGDClassifier(loss="perceptron", penalty="l2")
     clf.fit(metrics, classes) 
     return clf
-    
-
   
 def classifyPerceptron(metrics, classes):
     """Creates a Perceptron classifier trained on the data in metrics and classes.
@@ -54,8 +52,11 @@ def classifyPerceptron(metrics, classes):
 def classifyTree(metrics, classes): 
     """Creates a Decision Tree classifier trained on the data in metrics and classes.
     Returns the fitted function. Note that metrics and classes must be lists of the same length. """
+    tuned_parameters = [{'max_features': ["auto", "sqrt", "log2", 1, 3,5], 'min_samples_split': range(1, 10), 'min_samples_leaf':range(1,5)}]
     clf = tree.DecisionTreeClassifier(min_samples_leaf = 3) 
-    clf.fit(metrics, classes) 
+   # optClf = grid_search.GridSearchCV(clf, tuned_parameters)
+   # optClf.fit(metrics, classes) 
+    clf.fit(metrics,classes)
     return clf 
     
 def getClassifier():    

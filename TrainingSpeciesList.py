@@ -1,6 +1,8 @@
 import numpy
 from createTraining import * 
 from DensityAlignment import *
+from ast import literal_eval as make_tuple
+import csv
 #BSSA June 3 
 
 def BSSTrainJune3():
@@ -137,7 +139,38 @@ def createAllTransectTraining():
     
     
     
+def createAllResearchTraining():
+    
+    #Initialize empty lists to store all of the relevant information.  
+    imageNames = [] 
+    CoordLeft = []
+    CoordRight = []
+    SpeciesList = []
+    NumFlowers = []
     
     
+    #with open('Research Map Data Association - Sheet1.csv', 'rb') as csvfile: 
+    with open('EditedResearchMapData.csv', 'rb') as csvfile:
+        reader = csv.reader(csvfile, delimiter = ',')
+        i = 0 
+        for row in reader:
+            if i == 0: #throw out the first row. 
+                print(i) 
+            elif len(row)<8: 
+                print("Row too short")
+            else:
+                print(row)
+                if row[2] == '' or row[3] == '' or row[4] == '' or row[5] == '' or row[7] == '': 
+                    print('missing information')
+                else: 
+                    imageNames += [row[2] + '.jpg'] 
+                    tupleLeft = make_tuple('(' + row[3] + ')')
+                    CoordLeft += [tupleLeft]
+                    tupleRight = make_tuple('(' + row[4] + ')')
+                    CoordRight += [tupleRight]
+                    SpeciesList += [row[5]]
+                    NumFlowers += [float(row[7])]
+            i += 1
     
+    return imageNames, CoordLeft, CoordRight, SpeciesList, NumFlowers
     

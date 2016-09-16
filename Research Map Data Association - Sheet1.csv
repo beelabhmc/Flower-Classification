@@ -1,0 +1,68 @@
+Map Name,Marker Identity,Cropped Image Name,Crop Box Coordinate 1,Crop Box Coordinate 2,Flower Species,Species Number,Number of flowers ,Area of plant (m^2),Density,Notes
+Research_April24,S1P1,Research_April24_S1P1,"7199, 2858","7058, 2919",Cryptantha intermedia,0,192,,,Unsure of patch no. 
+,S1P2,,,,,,,,,
+Research_April24,S1P3,Research_April24_S1P3,"14122, 4975","14099, 4994",Cryptantha intermedia,0,33.33333333,,,Did I even crop out a plant patch?
+Research_April24,S1P4,Research_April24_S1P4,"14703, 4688","14615, 4730",Cryptantha intermedia,0,113.3333333,,,
+Research_April24,S2P1,Research_April24_S2P1,"8512, 7330","8374, 7581",Acmispon glaber,1,576,,,Unsure of patch no.
+,S2P2,,,,,,,,,
+Research_April24,S2P3,Research_April24_S2P3,"15009, 3512","14859, 3607",Acmispon glaber,1,180,,,
+,S2P4,,,,,,,,,
+Research_April24,S3P1,Research_April24_S3P1,"9737, 2914","9481, 3174",Pestemon spectabilis,2,1040,,,
+Research_April24,S3P2,Research_April24_S3P2,"11924, 3014","11706, 3176",Pestemon spectabilis,2,2400,,,Unsure of patch boundaries
+Research_April24,S3P3,Research_April24_S3P3,"14146, 6516","13972, 6672",Pestemon spectabilis,2,513.3333334,,,
+Research_April24,S3P4,Research_April24_S3P4,"15371, 5869","15072, 6171",Pestemon spectabilis,2,720,,,
+Research_April24,S4P1,Research_April24_S4P1,"11652, 6123","11591, 6161",Eriodictyon trichocalyx,3,204.6,,,
+Research_April24,S4P2,Research_April24_S4P2,"13044, 6399","12944, 6492",Eriodictyon trichocalyx,3,429.3333334,,,Unsure which patch the marker refers to
+Research_April24,S4P3,Research_April24_S4P3,"15966, 3224","15884, 3318",Eriodictyon trichocalyx,3,298.6666667,,,Unsure of patch boundaries
+Research_April24,S4P4,Research_April24_S4P4,"12298, 4740","12034, 4649",Eriodictyon trichocalyx,3,316.8,,,Unsure of patch boundaries
+,,,,,,,,,,
+Research_April29Marked,S1P1,Research_April29Marked_S1P1,,,Marrubium vulgare,,,,,
+Research_April29Marked,S1P2,Research_April29Marked_S1P2,,,Marrubium vulgare,,,,,
+Research_April29Marked,S1P3,Research_April29Marked_S1P3,,,Marrubium vulgare,,,,,
+Research_April29Marked,S1P4,Research_April29Marked_S1P4,,,Marrubium vulgare,,,,,
+Research_April29Marked,S2P1,Research_April29Marked_S2P1,"15228, 7642","14866, 7838",Acmispon glaber,1,2550,,,"Unsure of patch no. (probably a circle?), marker box covering plant"
+Research_April29Marked,S2P2,Research_April29Marked_S2P2,"12728, 6173","12605, 6343",Acmispon glaber,1,733.3333333,,,"Unsure of patch no., marker box covering plant"
+Research_April29Marked,S2P3,Research_April29Marked_S2P3,,,Acmispon glaber,1,,,,Marker placed in the middle of the patch :c
+Research_April29Marked,S2P4,Research_April29Marked_S2P4,"14217, 10752","13964, 10982",Acmispon glaber,1,1480,,,Unsure of patch no. (probably a triangle?)
+Research_April29Marked,S3P1,Research_April29Marked_S3P1,"14499, 11207","14303, 11316",Pestemon spectabilis,2,130,,,"Marker box covers patch, so I cropped about half the patch"
+Research_April29Marked,S3P2,Research_April29Marked_S3P2,,,Pestemon spectabilis,2,420.0000003,,,
+Research_April29Marked,S3P3,Research_April29Marked_S3P3,,,Pestemon spectabilis,2,1026.666667,,,
+Research_April29Marked,S3P4,Research_April29Marked_S3P4,,,Pestemon spectabilis,2,892.5,,,
+Research_April29Marked,S4P1,Research_April29Marked_S4P1,,,Eriodictyon trichocalyx,3,168,,,
+Research_April29Marked,S4P2,Research_April29Marked_S4P2,,,Eriodictyon trichocalyx,3,450,,,
+Research_April29Marked,S4P3,Research_April29Marked_S4P3,,,Eriodictyon trichocalyx,3,853.333336,,,
+Research_April29Marked,S4P4,Research_April29Marked_S4P4,"4711, 7627","4576, 7734",Eriodictyon trichocalyx,3,1053,,,"Unsure of patch boundaries, marker slightly covers patch"
+,,,,,,,,,,
+Research_May15Marked,S1P1,Research_May15Marked_S1P1,,,Marrubium vulgare,,,,,
+Research_May15Marked,S1P2,Research_May15Marked_S1P2,,,Marrubium vulgare,,,,,
+Research_May15Marked,S1P3,Research_May15Marked_S1P3,,,Marrubium vulgare,,,,,
+Research_May15Marked,S1P4,Research_May15Marked,,,Marrubium vulgare,,,,,
+Research_May15Marked,S2P1,Research_May15Marked,,,Acmispon glaber,1,,,,
+Research_May15Marked,S2P2,Research_May15Marked,"13870, 4552","13619, 4861",Acmispon glaber,1,1620,,,
+Research_May15Marked,S2P3,Research_May15Marked,,,Acmispon glaber,1,,,,
+Research_May15Marked,S2P4,Research_May15Marked,,,Acmispon glaber,1,,,,
+Research_May15Marked,S3P1,Research_May15Marked,,,Penstemon spectabilis,2,,,,
+Research_May15Marked,S3P2,Research_May15Marked,,,Penstemon spectabilis,2,,,,
+Research_May15Marked,S3P3,Research_May15Marked,,,Penstemon spectabilis,2,,,,
+Research_May15Marked,S3P4,Research_May15Marked,,,Penstemon spectabilis,2,,,,
+Research_May15Marked,S4P1,Research_May15Marked,,,Salvia apiana,3,,,,
+Research_May15Marked,S4P2,Research_May15Marked,,,Salvia apiana,3,,,,
+Research_May15Marked,S4P3,Research_May15Marked,,,Salvia apiana,3,,,,
+Research_May15Marked,S4P4,Research_May15Marked,,,Salvia apiana,3,,,,
+,,,,,,,,,,
+Research_May20Marked,S1P1,Research_May20Marked_S1P1,"15068, 7632","14889, 7829",Marrubium vulgare,,572.4,,,
+Research_May20Marked,S1P2,Research_May20Marked_S1P2,,,Marrubium vulgare,,1884.8,,,
+Research_May20Marked,S1P3,Research_May20Marked_S1P3,"14874, 9351","14583, 9630",Marrubium vulgare,,805,,,
+Research_May20Marked,S1P4,Research_May20Marked_S1P4,,,Marrubium vulgare,,2640,,,
+Research_May20Marked,S2P1,Research_May20Marked_S2P1,"15664, 4251","15419, 4640",Acmispon glaber,1,1380,,,It's unlikely patches 1 and 2 have the same number of flowers...?
+Research_May20Marked,S2P2,Research_May20Marked_S2P2,"18734, 7460","18392, 7716",Acmispon glaber,1,1380,,,"See note above, less sure about this image "
+Research_May20Marked,S2P3,Research_May20Marked_S2P3,"5704, 6014","5604, 6070",Acmispon glaber,1,94,,,
+Research_May20Marked,S2P4,Research_May20Marked_S2P4,"19558, 8105","19417, 8224",Acmispon glaber,1,180,,,
+Research_May20Marked,S3P1,Research_May20Marked_S3P1,,,Penstemon spectabilis,2,650,,,
+Research_May20Marked,S3P2,Research_May20Marked_S3P2,,,Penstemon spectabilis,2,192,,,
+Research_May20Marked,S3P3,Research_May20Marked_S3P3,"11339, 7319","11168, 7406",Penstemon spectabilis,2,144,,,
+Research_May20Marked,S3P4,Research_May20Marked_S3P4,,,Penstemon spectabilis,2,780,,,
+Research_May20Marked,S4P1,Research_May20Marked_S4P1,"19191, 8256","18737, 8619",Salvia apiana,,540,,,
+Research_May20Marked,S4P2,Research_May20Marked_S4P2,"4509, 7197","4251, 7417",Salvia apiana,,600,,,
+Research_May20Marked,S4P3,Research_May20Marked_S4P3,"18480, 6082","18274, 6192",Salvia apiana,,238,,,"Unsure of patch, marker box in covering plant"
+Research_May20Marked,S4P4,Research_May20Marked_S4P4,"16427, 6723","16276, 6894",Salvia apiana,,127.5,,,Unsure of patch and patch no.

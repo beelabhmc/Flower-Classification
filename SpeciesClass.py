@@ -1,5 +1,5 @@
 from ImageProcess import * #Import the same functions from image process for density stuff. 
-
+from Constants import *
 #No probabilities included 
 
 def oneSpeciesOverlap((i,j), n, imageName, overlap, subTileDict, fit, scaler, reduceFeatures, featureSelect): 
@@ -27,7 +27,7 @@ def oneSpeciesOverlap((i,j), n, imageName, overlap, subTileDict, fit, scaler, re
     return list(species)
 def allSpeciesOverlap(n, imageName, overlap,fit, scaler, reduceFeatures, featureSelect): 
     """Computes all species on a map with tilesize n, the given image as the map, and an overlap 1-overlap."""
-    image = Image.open(imageName) 
+    image =  Image.open(IMAGE_PATH + imageName) 
     imageSize = image.size 
     width = imageSize[0]
     height = imageSize[1] 
@@ -50,7 +50,7 @@ def allSpeciesOverlap(n, imageName, overlap,fit, scaler, reduceFeatures, feature
 
 def SpeciesMapShort(species,imageName, overlap, n):
     """Similar to denseMapShort except it produces a map for species."""
-    image = Image.open(imageName) #open the image
+    image = Image.open(IMAGE_PATH + imageName) #open the image
     imageSize = image.size #get the image size. 
     overlapSize = int(overlap*n)#Figure out how many pixels to shift by. 
     width = imageSize[0] 
@@ -78,10 +78,10 @@ def SpeciesMapShort(species,imageName, overlap, n):
     fig = plt.contourf(grid_x, grid_y, data, alpha = 0.6, antialiased = True) #Plot the data overlaid with the orignial image. 
 
     
-    mapIm = Image.open(imageName)
+    mapIm = Image.open(IMAGE_PATH + imageName)
     plt.imshow(mapIm)
     x = plt.colorbar(fig) #show the colorbar
-    plt.savefig(imageName + '_Classes.jpg') #Save the figure. Change the name here or rename the file after it has been saved. 
+    plt.savefig(IMAGE_PATH + imageName + '_Classes.jpg') #Save the figure. Change the name here or rename the file after it has been saved. 
 
 def classifyMap(classifier, densityList, metricList,scaler,imageName, tileSize, overlap, featureSelect):
     """Classify map calculates all of the species classes for an image and produces a map 

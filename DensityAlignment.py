@@ -1,5 +1,6 @@
 from PIL import Image
 import math
+from Constants import *
 
 #This file is used to create a training set. You can divide a large transect image into square 
 #meter portions. This set of images is then saved and can be read in. 
@@ -7,7 +8,7 @@ def divideTransect(Start, End, imageName):
     """Takes in the pixel coordinates of a start and end for a transect. Divides into images that
         match the collected density data. Outputs a list of these PIL images.""" 
         
-    image = Image.open(imageName)
+    image = Image.open(IMAGE_PATH + imageName)
     ##First, calculate the length of the transect. 
         
     dim1 = Start[0] - End[0] #width

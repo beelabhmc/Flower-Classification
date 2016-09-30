@@ -26,7 +26,7 @@ def oneSpeciesOverlap((i,j), n, imageName, overlap, subTileDict, fit, scaler, re
    # return list(species), list(speciesProb) #return species and matching prob of those species. 
     return list(species)
 def allSpeciesOverlap(n, imageName, overlap,fit, scaler, reduceFeatures, featureSelect): 
-    """Computes all densities on a map with tilesize n, the given image as the map, and an overlap 1-overlap."""
+    """Computes all species on a map with tilesize n, the given image as the map, and an overlap 1-overlap."""
     image = Image.open(imageName) 
     imageSize = image.size 
     width = imageSize[0]

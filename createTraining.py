@@ -1,4 +1,5 @@
 import numpy 
+from Constants import * 
 def createTraining(locations, species): 
     """Do stuff"""
     training = numpy.zeros(50)
@@ -11,7 +12,7 @@ def createImList(transectName, numPics):
     """Create a list of image names for a give transect so that they can easily be read in.""" 
     imList = []
     for i in range(numPics):
-        currentPic = str(transectName) + str(i+1) + ".jpg"
+        currentPic = IMAGE_PATH + str(transectName) + str(i+1) + ".jpg"
         imList += [currentPic]
     return imList
     

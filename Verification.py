@@ -7,6 +7,7 @@ from sklearn import cross_validation
 from classification import *
 from sklearn.metrics import classification_report
 from sklearn.feature_selection import SelectKBest
+from sklearn.cross_validation import train_test_split
 
 def GetTrainingMetrics(imageName, trainingType, densityList): 
     """Calculates or reads in pre calculated metrics on a training set to be used later."""
@@ -75,7 +76,7 @@ def GetTrainingMetrics(imageName, trainingType, densityList):
     return metricList #return the claculated or read in training metrics. 
     
     
-def VerifyTenfold(speciesList, metricList, estimator): 
+def VerifyTenfold(speciesList, metricList): 
     """Verification process using K-fold verification to test the accuracy of the algorithm.
     Takes in speciesList, the training species classes. 
     metricList, the training image metrics. 
@@ -114,6 +115,7 @@ def VerifyTenfold(speciesList, metricList, estimator):
     
 def classReport(metricTrain, speciesTrain, clf): 
     """Produces a report on how well an estimator performs on each class."""
+    #split the training set. 
     y_true = speciesTrain #This is the actual classes 
     y_pred = clf.predict(metricTrain) #The classes predicted by the classifier. 
     print(classification_report(y_true, y_pred)) #print out the full report of performance by class. 

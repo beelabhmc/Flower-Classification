@@ -68,6 +68,8 @@ def SpeciesTest():
         speciesTrain = speciesTrainResearch
         metricTrain.extend(metricTrainTransect) #combine metric lists
         speciesTrain.extend(speciesTrainTransect) #Combine the species lists. 
+        
+
     
         ### Save the training set  - metrics
         f = open('TotalMetricTraining.txt', 'w')
@@ -79,11 +81,20 @@ def SpeciesTest():
         print >> f, list(speciesTrain)
         f.close()
         
+    if 0: 
+        f = open('TotalSpeciesTraining.txt', 'r') 
+        data = f.read() 
+        metricTrain = eval(data) 
+        
+        g = open('TransectSpeciesTraining.txt', 'r') 
+        data = g.read() 
+        speciesTrain = eval(data) 
+        
     scaledMetrics, scaler = scaleMetrics(metricTrain) #scale the metrics and return both the scaled metrics and the scaler used. 
     kbest = SelectKBest(k=5) 
     newMetrics = kbest.fit_transform(scaledMetrics, speciesTrain)
     
-    clf = classifyTree(newMetrics, speciesTrain) #Fit a function 
+    clf = classifyRF(newMetrics, speciesTrain) #Fit a function 
     clf.feature_importances_
     
     tileSize = 100 

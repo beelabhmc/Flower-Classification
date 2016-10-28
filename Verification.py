@@ -76,7 +76,7 @@ def GetTrainingMetrics(imageName, trainingType, densityList):
     return metricList #return the claculated or read in training metrics. 
     
     
-def VerifyTenfold(speciesList, metricList, clf): 
+def VerifyTenfold(speciesList, metricList, est): 
     """Verification process using K-fold verification to test the accuracy of the algorithm.
     Takes in speciesList, the training species classes. 
     metricList, the training image metrics. 
@@ -95,14 +95,14 @@ def VerifyTenfold(speciesList, metricList, clf):
     #Use the full set for testing 
     M_train = metricList 
     d_train = speciesList
-    #for i in range(len(d_train)): 
-    #    if d_train[i] > 2: 
-    #        d_train[i] = 0 
+    for i in range(len(d_train)): 
+        if d_train[i] > 2: 
+            d_train[i] = 0 
     
     scaledMetrics, scaler = scaleMetrics(M_train)
     kbest = SelectKBest(k=18) 
     kbest.fit(M_train, d_train)
-    est = classifyTree(M_train, d_train)
+   # est = classifyTree(M_train, d_train)
     
     #M_train is the training set of metrics, d_train is the training set of densities
     #M_test is the metrics reserved for testing, d_test is the corresponding densities. 

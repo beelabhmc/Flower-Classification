@@ -76,7 +76,7 @@ def GetTrainingMetrics(imageName, trainingType, densityList):
     return metricList #return the claculated or read in training metrics. 
     
     
-def VerifyTenfold(speciesList, metricList): 
+def VerifyTenfold(speciesList, metricList, clf): 
     """Verification process using K-fold verification to test the accuracy of the algorithm.
     Takes in speciesList, the training species classes. 
     metricList, the training image metrics. 
@@ -95,9 +95,9 @@ def VerifyTenfold(speciesList, metricList):
     #Use the full set for testing 
     M_train = metricList 
     d_train = speciesList
-    for i in range(len(d_train)): 
-        if d_train[i] > 2: 
-            d_train[i] = 0 
+    #for i in range(len(d_train)): 
+    #    if d_train[i] > 2: 
+    #        d_train[i] = 0 
     
     scaledMetrics, scaler = scaleMetrics(M_train)
     kbest = SelectKBest(k=18) 
@@ -120,6 +120,15 @@ def classReport(metricTrain, speciesTrain, clf):
     y_pred = clf.predict(metricTrain) #The classes predicted by the classifier. 
     print(classification_report(y_true, y_pred)) #print out the full report of performance by class. 
 
+def classReport_2stage(metricTrain, speciesTrain, clf_flower, clf_species): 
+    y_true = speciesTrain
+    y_pred = speciesTrain 
+    for i in range(len(y_pred)): 
+        if clf_flower.predict(metricTrain[i]): 
+            y_pred[i] = clf_species.predict(metricTrain[i]) 
+        else: 
+            y_pred[i] = 0
+    print(classification_report(y_true, y_pred))
 
 def featOrder(imps): 
     """Sort the importance list to return the feature numbers by order of importance.""" 

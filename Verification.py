@@ -112,22 +112,46 @@ def VerifyTenfold(speciesList, metricList, est):
 
     
     return scores
+
     
+def VerifyTenfold_2stage(speciesList, metricList, clf_flower, clf_species): 
+    """Verification process using K-fold verification to test the accuracy of the algorithm.
+    Takes in speciesList, the training species classes. 
+    metricList, the training image metrics. 
+    Estimator, a trained classification estimator. """ 
+    
+    #First, we need an estimator. 
+    k = 10 #set the number of cross-validations (k)
+    #estimator = SVR( kernel = 'rbf', gamma = 0.05, epsilon = 0.4) #Create an instance of the SVR estimator 
+    #estimator = classifyKNN(metricList, densityList)
+    #Now seperate out a final test set from the given data.     
+    
+    scaledMetrics, scaler = scaleMetrics(metricList)
+   # est = classifyTree(M_train, d_train)
+    for i in range(10): #cross-validate 10 times 
+        X_train, X_test, y_train, y_test = cross_validation.train_test_split(metricList, speciesList, test_size=0.4, random_state=0) #split the data. 
+        est_flower = clf_flower.fit(X_train, y_train_flowers) #fit the estimator for flowers. 
+        est_species = clf_species.fit(X_train, y_train_species) #fit the estimator for species. 
+    return scores
+        
 def classReport(metricTrain, speciesTrain, clf): 
     """Produces a report on how well an estimator performs on each class."""
     #split the training set. 
     y_true = speciesTrain #This is the actual classes 
     y_pred = clf.predict(metricTrain) #The classes predicted by the classifier. 
+#    print(y_pred)
     print(classification_report(y_true, y_pred)) #print out the full report of performance by class. 
 
 def classReport_2stage(metricTrain, speciesTrain, clf_flower, clf_species): 
     y_true = speciesTrain
-    y_pred = speciesTrain 
-    for i in range(len(y_pred)): 
-        if clf_flower.predict(metricTrain[i]): 
-            y_pred[i] = clf_species.predict(metricTrain[i]) 
-        else: 
-            y_pred[i] = 0
+    y_pred = []
+    for i in range(len(metricTrain)): #for each point in the training set. 
+        y_pred.extend(clf_species.predict(metricTrain[i]))
+        #if clf_flower.predict(metricTrain[i]): #if it is a flower... 
+        #    print(clf_species.predict(metricTrain[i]))
+        #    y_pred += [clf_species.predict(metricTrain[i])]
+        #else: 
+        #    y_pred += [clf_flower.predict(metricTrain[i])]
     print(classification_report(y_true, y_pred))
 
 def featOrder(imps): 

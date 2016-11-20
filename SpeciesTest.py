@@ -104,13 +104,14 @@ def SpeciesTest():
     clf_flower = classifyKNN(newMetrics, flowerTrain) #fit a function that only considers flower vs. non-flower 
     clf_species = classifyTree(newMetrics, speciesTrain) #Fit a function 
     
-    tileSize = 100 
+    tileSize = 50 
     overlap = 0.2
-    classifyMap_2stage(clf_species, clf_flower, speciesTrain, newMetrics, scaler, imageName, tileSize, overlap, kbest)
+    species = classifyMap_2stage(clf_species, clf_flower, speciesTrain, newMetrics, scaler, imageName, tileSize, overlap, kbest)
     #classifyMap(clf_species, speciesTrain, newMetrics, scaler, imageName, tileSize, overlap, kbest)   
     plt.show()
 
-
+    return species
+    
 def parameterSearch(): 
     iris = datasets.load_iris()
     parameters = {'kernel':('linear', 'rbf'), 'C':[1, 10]}

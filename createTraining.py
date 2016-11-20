@@ -1,5 +1,6 @@
 import numpy 
 from Constants import * 
+import ImageProcess
 def createTraining(locations, species): 
     """Do stuff"""
     training = numpy.zeros(50)
@@ -16,6 +17,39 @@ def createImList(transectName, numPics):
         imList += [currentPic]
     return imList
     
+    
+def tiledTraining(imList, species): 
+    """Take in a list of training images and their corresponding species. 
+    Create a new set of images through tiling and return a list 
+    of training metrics and species for each subimage.""" 
+    
+    metricList = [] #initialize an empty list of metrics. 
+    speciesList = [] #initialize an empty list of species. 
+    
+    for i in range(len(imList)): #for each image you are training on. 
+        imMetrics = [] #keep track of metrics for this image seperatly. 
+        image = Image.open(imList(i)) #load in the image.
+    #Find the size of the image. 
+        size = image.size
+        width = size[0] #pull out length and width 
+        length = size[1] 
+
+        smallTileSize = int(overlap*n)
+
+    # Extract all tiles using a specific overlap (overlap depends on n)
+        for i in range(0,width -int( overlap*n), int(overlap*n)): #Go through the entire image 
+            for j in range(0, length - int(overlap*n), int(overlap*n)): 
+                box = (i,j,i+smallTileSize, j+smallTileSize)  #edge coordinates of the next rectangle. 
+                newImage = image.crop(box) #pull out the desired rectangle
+            ### METRIC CALCULATIONS - Time counters commented out for now. 
+
+                Metrics = getMetrics(newImage) #calculate all of the metrics on this cropped out image. 
+                imMetrics += [Metrics] #add these metrics to the metric dictionary with the upper left coordinates as the key. 
+        imSpecies = length(imMetrics)*[species(i)]
+        metricList += imMetrics #add to the overall list 
+        speciesList += imSpecies 
+        
+    return metricList, speciesList
     
 def numericalSpecies(species): 
     """Change the species from scientific names into corresponding numbers to be used in classification.

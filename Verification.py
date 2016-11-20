@@ -127,11 +127,14 @@ def VerifyTenfold_2stage(speciesList, metricList, clf_flower, clf_species):
     #Now seperate out a final test set from the given data.     
     
     scaledMetrics, scaler = scaleMetrics(metricList)
+
    # est = classifyTree(M_train, d_train)
     for i in range(10): #cross-validate 10 times 
         X_train, X_test, y_train, y_test = cross_validation.train_test_split(metricList, speciesList, test_size=0.4, random_state=0) #split the data. 
         est_flower = clf_flower.fit(X_train, y_train_flowers) #fit the estimator for flowers. 
         est_species = clf_species.fit(X_train, y_train_species) #fit the estimator for species. 
+        
+        #Score each set of testing and training results. 
     return scores
         
 def classReport(metricTrain, speciesTrain, clf): 

@@ -34,7 +34,7 @@ def getMetrics(image):
 def getSub(n, imageName, overlap): 
     """Takes in n, an integer less than or equal to the minimum dimension of the image 
        and imageName, the string containing the name of the image to be processed.  
-       Returns a list of all nxn subrectangles of image.""" 
+       Returns a list of metrics for each nxn subsection of the image.""" 
     # define overlap percentage for sub images        
     image = Image.open(imageName) #load in the image.
     #Find the size of the image. 

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import ImageFilter
+from PIL import ImageFilter
 import numpy
 from PIL import Image
 from PIL import ImageStat

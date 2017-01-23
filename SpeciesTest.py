@@ -11,13 +11,22 @@ from sklearn.feature_selection import SelectKBest
 from sklearn import grid_search, datasets
 from Constants import *
 
-def SpeciesTest():
-    
+def SpeciesTest(trainingMode):
     #input a training set - list of metrics and the corresponding species. The 2 lists must be the same length. 
     #metricTrain= [[33.411989795918366, 33.411989795918366, 33.411989795918366, 0.0, 82.525997400295523, 0.016581632653061226, 0.0], [31.682397959183675, 31.682397959183675, 31.682397959183675, 0.0, 82.525997400295523, 0.014668367346938776, 0.03125], [32.691964285714285, 32.691964285714285, 32.691964285714285, 0.0, 82.525997400295523, 0.01403061224489796, 0.03125], [32.63647959183673, 32.63647959183673, 32.63647959183673, 0.0, 82.525997400295523, 0.01211734693877551, 0.21875], [32.61224489795919, 32.61224489795919, 32.61224489795919, 0.0, 82.525997400295523, 0.012755102040816327, 0.0], [30.714923469387756, 30.714923469387756, 30.714923469387756, 0.0, 82.525997400295523, 0.008928571428571428, 0.0], [30.896045918367346, 30.896045918367346, 30.896045918367346, 0.0, 82.525997400295523, 0.01594387755102041, 0.0], [30.852040816326532, 30.852040816326532, 30.852040816326532, 0.0, 82.525997400295523, 0.01594387755102041, 0.0625], [29.049744897959183, 29.049744897959183, 29.049744897959183, 0.0, 82.525997400295523, 0.01211734693877551, 0.03125], [26.432397959183675, 26.432397959183675, 26.432397959183675, 0.0, 82.525997400295523, 0.008290816326530613, 0.25], [27.523596938775512, 27.523596938775512, 27.523596938775512, 0.0, 82.525997400295523, 0.001913265306122449, 0.0625], [27.310586734693878, 27.310586734693878, 27.310586734693878, 0.0, 82.525997400295523, 0.009566326530612245, 0.0], [26.762755102040817, 26.762755102040817, 26.762755102040817, 0.0, 82.525997400295523, 0.005739795918367347, 0.0], [31.371173469387756, 31.371173469387756, 31.371173469387756, 0.0, 82.525997400295523, 0.016581632653061226, 0.0], [29.536989795918366, 29.536989795918366, 29.536989795918366, 0.0, 82.525997400295523, 0.016581632653061226, 0.0], [26.915816326530614, 26.915816326530614, 26.915816326530614, 0.0, 82.525997400295523, 0.011479591836734694, 0.0], [27.807397959183675, 27.807397959183675, 27.807397959183675, 0.0, 82.525997400295523, 0.016581632653061226, 0.0], [28.81313775510204, 28.81313775510204, 28.81313775510204, 0.0, 82.525997400295523, 0.015306122448979591, 0.0], [26.301020408163264, 26.301020408163264, 26.301020408163264, 0.0, 82.525997400295523, 0.01020408163265306, 0.0], [27.67283163265306, 27.67283163265306, 27.67283163265306, 0.0, 82.525997400295523, 0.015306122448979591, 0.0], [28.051020408163264, 28.051020408163264, 28.051020408163264, 0.0, 82.525997400295523, 0.005739795918367347, 0.03125], [26.443877551020407, 26.443877551020407, 26.443877551020407, 0.0, 82.525997400295523, 0.01020408163265306, 0.0], [27.12563775510204, 27.12563775510204, 27.12563775510204, 0.0, 82.525997400295523, 0.011479591836734694, 0.0], [27.998086734693878, 27.998086734693878, 27.998086734693878, 0.0, 82.525997400295523, 0.008290816326530613, 0.21875], [28.012117346938776, 28.012117346938776, 28.012117346938776, 0.0, 82.525997400295523, 0.010841836734693877, 0.25], [25.68813775510204, 25.68813775510204, 25.68813775510204, 0.0, 82.525997400295523, 0.01211734693877551, 0.0], [25.45216836734694, 25.45216836734694, 25.45216836734694, 0.0, 82.525997400295523, 0.01020408163265306, 0.0], [26.017857142857142, 26.017857142857142, 26.017857142857142, 0.0, 82.525997400295523, 0.016581632653061226, 0.25], [24.292729591836736, 24.292729591836736, 24.292729591836736, 0.0, 82.525997400295523, 0.012755102040816327, 0.0], [24.325892857142858, 24.325892857142858, 24.325892857142858, 0.0, 82.525997400295523, 0.0012755102040816326, 0.0], [19.853954081632654, 19.853954081632654, 19.853954081632654, 0.0, 82.525997400295523, 0.0, 0.0], [19.130102040816325, 19.130102040816325, 19.130102040816325, 0.0, 82.525997400295523, 0.0, 0.0], [16.59502551020408, 16.59502551020408, 16.59502551020408, 0.0, 82.525997400295523, 0.0, 0.21875], [14.911989795918368, 14.911989795918368, 14.911989795918368, 0.0, 82.525997400295523, 0.0, 0.0], [14.662627551020408, 14.662627551020408, 14.662627551020408, 0.0, 82.525997400295523, 0.0, 0.0], [15.293367346938776, 15.293367346938776, 15.293367346938776, 0.0, 82.525997400295523, 0.0, 0.0], [14.072704081632653, 14.072704081632653, 14.072704081632653, 0.0, 82.525997400295523, 0.0, 0.0], [12.860969387755102, 12.860969387755102, 12.860969387755102, 0.0, 82.525997400295523, 0.0006377551020408163, 0.0], [13.991071428571429, 13.991071428571429, 13.991071428571429, 0.0, 82.525997400295523, 0.0, 0.0], [15.65625, 15.65625, 15.65625, 0.0, 82.525997400295523, 0.0, 0.0], [14.290816326530612, 14.290816326530612, 14.290816326530612, 0.0, 82.525997400295523, 0.0, 0.0], [14.454719387755102, 14.454719387755102, 14.454719387755102, 0.0, 82.525997400295523, 0.0, 0.0], [11.939413265306122, 11.939413265306122, 11.939413265306122, 0.0, 82.525997400295523, 0.0, 0.0], [12.299744897959183, 12.299744897959183, 12.299744897959183, 0.0, 82.525997400295523, 0.0, 0.0], [12.440688775510203, 12.440688775510203, 12.440688775510203, 0.0, 82.525997400295523, 0.0, 0.0], [11.645408163265307, 11.645408163265307, 11.645408163265307, 0.0, 82.525997400295523, 0.0, 0.0], [12.432397959183673, 12.432397959183673, 12.432397959183673, 0.0, 82.525997400295523, 0.0, 0.0], [13.03826530612245, 13.03826530612245, 13.03826530612245, 0.0, 82.525997400295523, 0.0, 0.0], [10.246811224489797, 10.246811224489797, 10.246811224489797, 0.0, 82.525997400295523, 0.0, 0.0], [9.606505102040817, 9.606505102040817, 9.606505102040817, 0.0, 82.525997400295523, 0.0, 0.0]]
     #speciesTrain = [1,3,2,5,2,5,4,6,3,7,4,1,5,4,3,5,7,8,4,2,5,9,7,4,3,2,7,6,8,7,6,5,6,7,9,0,5,3,1,2,3,2,5,6,0,6,0,6,0,5]
     imageName = 'Research_May20_crop.jpg' 
-    #
+    tileSize = 50  #define the tilesize and overlap to be used in training and testing. 
+    overlap = 0.2
+    n = tileSize
+
+    #Training modes: 
+        #1: Transect training only.
+        #2: Read in from previously saved data for transects
+        #3: Transect and research, with research unsegmented (left at original size)
+        #4: Read in from previously saved data for transects and research. 
+        #5: Transect and research, with research segmented further to match test size. 
+    
     #BSSImList, BSS_Train = BSSTrain() 
     #
     #imageList = BSSImList #choose an image list and corresponding training list 
@@ -26,7 +35,7 @@ def SpeciesTest():
     #
     #
     #metricTrain, speciesTrain = allTrainMetrics(imageList, speciesList)
-    if 0:
+    if trainingMode == 1:
         FullImList, FullSpeciesList = createAllTransectTraining()
         metricTrain, speciesTrain = allTrainMetrics(FullImList, FullSpeciesList) #get training metrics 
         
@@ -39,7 +48,7 @@ def SpeciesTest():
         f = open('TransectSpeciesTraining.txt', 'w')
         print >> f, list(speciesTrain)
         f.close()
-    if 0: 
+    if trainingMode == 2: 
         f = open('TransectMetricTraining.txt', 'r') 
         data = f.read() 
         metricTrain = eval(data) 
@@ -47,7 +56,7 @@ def SpeciesTest():
         g = open('TransectSpeciesTraining.txt', 'r') 
         data = g.read() 
         speciesTrain = eval(data) 
-    if 0: 
+    if trainingMode == 3: 
         imList, coordLeft, coordRight, speciesList, numFlowers = createAllResearchTraining()
         speciesList = numericalSpecies(speciesList)
         metricTrainResearch, speciesTrainResearch = allTrainMetrics(imList, speciesList)
@@ -86,7 +95,8 @@ def SpeciesTest():
         f = open('FlowerTrain.txt', 'w')
         print >> f, list(flowerTrain)
         f.close()
-    if 1: 
+
+    if trainingMode == 4: 
         f = open('TotalMetricTraining.txt', 'r') 
         data = f.read() 
         metricTrain = eval(data) 
@@ -96,16 +106,47 @@ def SpeciesTest():
         speciesTrain = eval(data) 
         
         flowerTrain = [1 if i else 0 for i in speciesTrain]
+    if trainingMode == 5: #Training based on segmented research area images. 
+        transectIms, transectSpecies = createAllTransectTraining() #Get a list of images and species for the transects. 
+        metricTrainTransect, speciesTrainTransect = allTrainMetrics(transectIms, transectSpecies) #get training metrics for transects. 
+        #Input the segmented research area images. 
+        imListResearch, coordLeft, coordRight, speciesListResearch, numFlowers = createAllResearchTraining()  #Get all of the training images and species information 
+        speciesListResearch = numericalSpecies(speciesListResearch) #Convert to a numerical species (i.e. 1,2,3 instead of names)
+        metricTrainResearch, speciesTrainResearch = tiledTraining(imListResearch, speciesListResearch, n, overlap) #get the metrics for segmented research images. 
+        #Combine the two kinds of training data to create one comprehensive list. 
+        metricTrain = metricTrainTransect 
+        metricTrain.extend(metricTrainResearch) #add the research data at the end of the training list. 
+        speciesTrain - speciesTrainTransect 
+        speciesTrain.extend(speciesTrainResearch) #also add the research data at the end of the training list. 
+
+      
+        flowerTrain = [1 if i else 0 for i in speciesTrain] #create a list of species training that only denotes flower vs. non-flower 
+        #Save all of the training data to files so that it can be read in without calculation in the future. 
+        ### Save the training set - metriscs 
+        f = open('metricTraintxt', 'w')
+        print >> f, list(metricTrain)
+        f.close()
+
+        ### Save the training set - densities 
+        f = open('speciesTrain.txt', 'w')
+        print >> f, list(speciesTrain)
+        f.close()
         
+        ### Save the training set - flower vs. non-flower 
+        f = open('FlowerTrain.txt', 'w')
+        print >> f, list(flowerTrain)
+        f.close()
+
+
+    #Training data has been acquired. Scale the metrics. 
     scaledMetrics, scaler = scaleMetrics(metricTrain) #scale the metrics and return both the scaled metrics and the scaler used. 
     kbest = SelectKBest(k=5) 
-    newMetrics = kbest.fit_transform(scaledMetrics, speciesTrain)
+    newMetrics = kbest.fit_transform(scaledMetrics, speciesTrain) #Select onlyk the k best metrics. (Comment out to use all metrics.)
     
+    #Train the classifier (or classifiers in a 2 stage process). 
     clf_flower = classifyKNN(newMetrics, flowerTrain) #fit a function that only considers flower vs. non-flower 
     clf_species = classifyTree(newMetrics, speciesTrain) #Fit a function 
     
-    tileSize = 50 
-    overlap = 0.2
     species = classifyMap_2stage(clf_species, clf_flower, speciesTrain, newMetrics, scaler, imageName, tileSize, overlap, kbest)
     #classifyMap(clf_species, speciesTrain, newMetrics, scaler, imageName, tileSize, overlap, kbest)   
     plt.show()
@@ -122,4 +163,4 @@ def parameterSearch():
 
 # Allows us to simply run SpeciesTest without needing to load it in first.
 if __name__ == '__main__':
-        SpeciesTest()
+        SpeciesTest(5) #currently running with training mode five. 

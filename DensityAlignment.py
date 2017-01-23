@@ -87,7 +87,7 @@ def saveTransect(imageList, start, nameBase):
         No output, saves files in your current directory.""" 
     currentNum = start
     for quadrat in imageList: 
-        fileName = nameBase + str(currentNum) + '.jpg'
+        fileName = IMAGE_PATH + nameBase + str(currentNum) + '.jpg'
         quadrat.save(fileName)
         currentNum += 1 
             

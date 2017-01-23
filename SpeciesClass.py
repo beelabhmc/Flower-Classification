@@ -82,7 +82,6 @@ def SpeciesMapShort(species,imageName, overlap, n):
     mapIm = Image.open(imageName)
     plt.imshow(mapIm)
     x = plt.colorbar(fig) #show the colorbar
-<<<<<<< HEAD
     plt.savefig(IMAGE_PATH + imageName + '_Classes.jpg') #Save the figure. Change the name here or rename the file after it has been saved.
 
 
@@ -124,10 +123,7 @@ def returnClassifyMap(classifier, densityList, metricList,scaler,imageName, tile
     Species = allSpeciesOverlap(tileSize, imageName, overlap,classifier, scaler, reduceFeatures, featureSelect) #Find all of the species classes.
     coords = SpeciesMapReturnData(Species, imageName, overlap, tileSize) # Get fig and species coordinates
     return fig, coords, Species #return the overlay figure, the coordinates and their associated species so that they can be analyzed ImageFind
-        
-=======
     plt.savefig(imageName + '_Classes.jpg') #Save the figure. Change the name here or rename the file after it has been saved. 
->>>>>>> origin/master
 
 def classifyMap(classifier, densityList, metricList,scaler,imageName, tileSize, overlap, featureSelect):
     """Classify map calculates all of the species classes for an image and produces a map 

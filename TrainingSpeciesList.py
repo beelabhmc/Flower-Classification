@@ -52,9 +52,7 @@ def createAllTransectTraining():
     USSMay25Locations = [4, 6, 11, 12, 13, 21, 14, 25, 39]
     USSMay25Species = ['Mirabilis laevis', 'Pseudognaphalium californicus', 'Pseudognaphalium californicus', 'Pseudognaphalium californicus', 'Pseudognaphalium californicus', 'Pseudognaphalium californicus', 'Pseudognaphalium californicus', 'Pseudognaphalium californicus', 'Pseudognaphalium californicus']
     
-    
     USSMay25TrainIm, USSMay25TrainSpecies = GeneralTrainingList(USSMay25Locations, USSMay25Species, 'USS_May25_', 'USS_May25.jpg', USSMay25Start, USSMay25End)
-    
     
     #USS June 3 - USS A (May 31)
     USSJune3Start = (10864, 7165) 
@@ -129,9 +127,7 @@ def createAllTransectTraining():
     BRSMay27Species = ['Erodium cicutarium', 'Eriogonum fasciculatum', 'Eriogonum fasciculatum', 'Eriogonum fasciculatum']
     
     BRSMay27TrainIm, BRSMay27TrainSpecies = GeneralTrainingList(BRSMay27Locations, BRSMay27Species, 'BRS_May27_', 'BRS_May27.jpg', BRSMay27Start, BRSMay27End)
-    
-    
-    
+
     
     FullTrainIm = USSMay25TrainIm + USSJune3TrainIm + USSJune7TrainIm + NNGJune2TrainIm + BSSMay19TrainIm + BSSMay26TrainIm + BSSJune3TrainIm + BSSJune8TrainIm + BRSMay27TrainIm
     FullTrainSpecies = numpy.concatenate((USSMay25TrainSpecies, USSJune3TrainSpecies, USSJune7TrainSpecies, NNGJune2TrainSpecies, BSSMay19TrainSpecies, BSSMay26TrainSpecies, BSSJune3TrainSpecies, BSSJune8TrainSpecies, BRSMay27TrainSpecies), axis = 0)

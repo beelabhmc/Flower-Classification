@@ -9,7 +9,7 @@ from scipy.interpolate import griddata
 from sklearn.gaussian_process import GaussianProcess
 import sklearn
 import math
-import OpenGL
+#import OpenGL
 from mpl_toolkits.mplot3d import Axes3D
 
 

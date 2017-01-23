@@ -25,9 +25,9 @@ clfKNN = classifyKNN(metric_train, species_train)
 #clfPercep = classifyPerceptron(metric_train, species_train)
 clfTree = classifyTree(metric_train, species_train)
 
-clf_flower =  classifyKNN(metric_train, flower_train) 
+clf_flower =  classifyKNN(metric_train, flower_train)
 
-print('Random Forest Scores') 
+print('Random Forest Scores')
 classReport(metric_test, species_test, clfRF)
 scores = VerifyTenfold(speciesTrain, metricTrain, clfRF)
 print('RF', np.mean(scores) )
@@ -62,3 +62,4 @@ print('2 stage scores')
 classReport_2stage(metric_test, species_test, clf_flower, clfRF)
 scores = VerifyTenfold(speciesTrain, metricTrain, clfRF)
 print('2 stage', np.mean(scores))
+

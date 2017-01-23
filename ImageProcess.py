@@ -7,6 +7,7 @@ from colorsys import *
 from operator import add
 from sklearn import preprocessing
 from skimage.feature import greycomatrix, greycoprops
+from skimage import filters, color
 from MachineLearning import * 
 import matplotlib 
 from scipy.stats import skew 
@@ -24,7 +25,7 @@ def getMetrics(image):
     yellow = findYellowFast(image) 
     edges = countEdgePixels(image) 
     var = colorVariance(image) 
-    texture = textureAnalysis(image) 
+    texture = textureAnalysis(image)
     (contrast, dissim, homog, energy, corr, ASM) =  GLCM(image)
     (Hstd, Sstd, Vstd, Hskew, Sskew, Vskew) = colorMoment(image)
     metrics = [avg[0], avg[1], avg[2], yellow, var, edges, texture, contrast, dissim, homog, energy, corr, ASM, Hstd, Sstd, Vstd, Hskew, Sskew, Vskew]
@@ -352,8 +353,7 @@ def colorMoment(im):
     
     
     return [Hstd, Sstd, Vstd, Hskew, Sskew, Vskew] #return all of the metrics. 
-    
-    
+
     
     
     

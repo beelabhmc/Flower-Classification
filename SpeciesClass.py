@@ -81,7 +81,48 @@ def SpeciesMapShort(species,imageName, overlap, n):
     mapIm = Image.open(IMAGE_PATH + imageName)
     plt.imshow(mapIm)
     x = plt.colorbar(fig) #show the colorbar
-    plt.savefig(IMAGE_PATH + imageName + '_Classes.jpg') #Save the figure. Change the name here or rename the file after it has been saved. 
+    plt.savefig(IMAGE_PATH + imageName + '_Classes.jpg') #Save the figure. Change the name here or rename the file after it has been saved.
+
+
+def SpeciesMapReturnData(species, imageName, overlap, n):
+    """similar to SpeciesMapShort, but instead returns the species data as well as the color overlap"""
+    image = Image.open(IMAGE_PATH + imageName) #open the image
+    imageSize = image.size #get the image size.
+    overlapSize = int(overlap*n)#Figure out how many pixels to shift by.
+    width = imageSize[0]
+    height = imageSize[1]
+    rowTiles = int((width-n)/(overlapSize))+1 #calculate the number of tiles in a row.
+    
+    pointsx = [] #initialize empty lists to hold the point location data.
+    pointsy = []
+    for i in range(len(species)):  #find the points where species was determined
+        x = (i%rowTiles)*overlapSize + n/2
+        y = (i/rowTiles)*overlapSize + n/2
+        pointsx += [x]
+        pointsy += [y]
+    pointsx = numpy.array(pointsx) #convert points to numpy arrays for future operations.
+    pointsy = numpy.array(pointsy)
+    #interpolation
+    grid_x, grid_y = numpy.mgrid[0:width, 0:height] #create a grid to interpolate over.
+
+    # print(species)
+    species = numpy.array(species)
+    data = griddata((pointsx, pointsy), species, (grid_x, grid_y), method = 'nearest')
+    
+    #Plotting stuff
+    #v = numpy.linspace(min(species), max(species), (max(species) - min(species)), endpoint=True)
+    fig = plt.contourf(grid_x, grid_y, data, alpha = 0.6, antialiased = True) #Plot the data overlaid with the orignial image.
+    
+    return fig, [pointsx, pointsy]
+
+def returnClassifyMap(classifier, densityList, metricList,scaler,imageName, tileSize, overlap, featureSelect):
+    """Similar to classifyMap but also returns overlay of map and the coordinates of species
+        using SpeciesMapReturnData"""
+    reduceFeatures = 1 #reduce the number of features if 1, if 0 use all features.
+    Species = allSpeciesOverlap(tileSize, imageName, overlap,classifier, scaler, reduceFeatures, featureSelect) #Find all of the species classes.
+    coords = SpeciesMapReturnData(Species, imageName, overlap, tileSize) # Get fig and species coordinates
+    return fig, coords, Species #return the overlay figure, the coordinates and their associated species so that they can be analyzed ImageFind
+        
 
 def classifyMap(classifier, densityList, metricList,scaler,imageName, tileSize, overlap, featureSelect):
     """Classify map calculates all of the species classes for an image and produces a map 

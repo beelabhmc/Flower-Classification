@@ -42,7 +42,7 @@ def tiledTraining(imList, species, overlap, n):
             ### METRIC CALCULATIONS: Get the metrics for each subrectangle in the image. 
                 Metrics = IP.getMetrics(newImage) #calculate all of the metrics on this cropped out image. 
                 imMetrics += [Metrics] #add these metrics to a list, imMetrics, that will keep track of metrics within each image. 
-        imSpecies = length(imMetrics)*[species(i)] #Extend the species list (mark all subrectangles as the same species)
+        imSpecies = length(imMetrics)*[species[i]] #Extend the species list (mark all subrectangles as the same species)
         metricList += imMetrics #add to the overall lists of metrics and species 
         speciesList += imSpecies 
     return metricList, speciesList #Return the overal metric and species lists. These now include subdivided portions of each image. 

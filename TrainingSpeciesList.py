@@ -63,8 +63,6 @@ def createAllTransectTraining():
     
     USSJune3TrainIm, USSJune3TrainSpecies = GeneralTrainingList(USSJune3Locations, USSJune3Species, 'USS_June3_', 'USS_June3.jpg', USSJune3Start, USSJune3End)
 
-
-
     #USS June 7 - USS B (June 6)
     USSJune7Start = (5447, 8621) 
     USSJune7End = (10476, 15927)

@@ -10,6 +10,7 @@ from sklearn.feature_selection import VarianceThreshold
 from sklearn.feature_selection import SelectKBest
 from sklearn import grid_search, datasets
 from Constants import *
+import numpy as np
 
 def SpeciesTest(trainingMode):
     #input a training set - list of metrics and the corresponding species. The 2 lists must be the same length. 
@@ -118,19 +119,21 @@ def SpeciesTest(trainingMode):
         metricTrainResearch, speciesTrainResearch = tiledTraining(imListResearch, speciesListResearch, n, overlap) #get the metrics for segmented research images. 
         #Combine the two kinds of training data to create one comprehensive list. 
         metricTrain = metricTrainTransect 
-        metricTrain.extend(metricTrainResearch) #add the research data at the end of the training list. 
-        speciesTrain - speciesTrainTransect 
-        speciesTrain.extend(speciesTrainResearch) #also add the research data at the end of the training list. 
+        metricTrain.extend(metricTrainResearch) #add the research data at the end of the training list for metrics. 
+        speciesTrain = speciesTrainTransect 
+        speciesTrain = np.append(speciesTrainTransect, speciesListResearch)
+        
+        #speciesTrain.append(speciesTrainResearch) #also add the research data at the end of the training list for species. 
 
       
         flowerTrain = [1 if i else 0 for i in speciesTrain] #create a list of species training that only denotes flower vs. non-flower 
         #Save all of the training data to files so that it can be read in without calculation in the future. 
-        ### Save the training set - metriscs 
-        f = open('metricTraintxt', 'w')
+        ### Save the training set - metrics 
+        f = open('metricTrain.txt', 'w')
         print >> f, list(metricTrain)
         f.close()
 
-        ### Save the training set - densities 
+        ### Save the training set - species 
         f = open('speciesTrain.txt', 'w')
         print >> f, list(speciesTrain)
         f.close()
@@ -140,6 +143,18 @@ def SpeciesTest(trainingMode):
         print >> f, list(flowerTrain)
         f.close()
 
+    if trainingMode == 6: 
+        f = open('metricTraint.txt', 'r') 
+        data = f.read() 
+        metricTrain = eval(data) 
+        
+        g = open('specesTrain.txt', 'r') 
+        data = g.read() 
+        speciesTrain = eval(data) 
+        
+        h = open('FlowerTrain.txt', 'r') 
+        data = h.read() 
+        flowerTrain = eval(data)
 
     #Training data has been acquired. Scale the metrics. 
     scaledMetrics, scaler = scaleMetrics(metricTrain) #scale the metrics and return both the scaled metrics and the scaler used. 

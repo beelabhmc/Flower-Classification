@@ -35,14 +35,15 @@ def tiledTraining(imList, species, overlap, n):
         length = size[1] 
         smallTileSize = int(overlap*n) #Set the tilesize and overlap you want to train on. This should match the size you will test on. 
     # Extract all tiles using a specific overlap (overlap depends on n). This happens for each image.
-        for i in range(0,width -int( overlap*n), int(overlap*n)): #Go through the entire image 
+        for k in range(0,width -int( overlap*n), int(overlap*n)): #Go through the entire image 
             for j in range(0, length - int(overlap*n), int(overlap*n)): 
-                box = (i,j,i+smallTileSize, j+smallTileSize)  #edge coordinates of the current rectangle. 
+                box = (k,j,k+smallTileSize, j+smallTileSize)  #edge coordinates of the current rectangle. 
                 newImage = image.crop(box) #pull out the desired rectangle
             ### METRIC CALCULATIONS: Get the metrics for each subrectangle in the image. 
                 Metrics = IP.getMetrics(newImage) #calculate all of the metrics on this cropped out image. 
                 imMetrics += [Metrics] #add these metrics to a list, imMetrics, that will keep track of metrics within each image. 
-        imSpecies = length(imMetrics)*[species[i]] #Extend the species list (mark all subrectangles as the same species)
+        print(species)
+        imSpecies = len(imMetrics)*[species[i]] #Extend the species list (mark all subrectangles as the same species)
         metricList += imMetrics #add to the overall lists of metrics and species 
         speciesList += imSpecies 
     return metricList, speciesList #Return the overal metric and species lists. These now include subdivided portions of each image. 

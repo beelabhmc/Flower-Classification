@@ -8,7 +8,8 @@ from classification import *
 from sklearn.metrics import classification_report
 from sklearn.feature_selection import SelectKBest
 from sklearn.cross_validation import train_test_split
-
+import sklearn.utils.multiclass as mc
+import numpy as np 
 def GetTrainingMetrics(imageName, trainingType, densityList): 
     """Calculates or reads in pre calculated metrics on a training set to be used later."""
     
@@ -148,14 +149,17 @@ def classReport(metricTrain, speciesTrain, clf):
 def classReport_2stage(metricTrain, speciesTrain, clf_flower, clf_species): 
     y_true = speciesTrain
     y_pred = []
+    metricTrain = np.asarray(metricTrain) #Transform the data into a numpy array. 
     for i in range(len(metricTrain)): #for each point in the training set. 
-        y_pred.extend(clf_species.predict(metricTrain[i]))
-        #if clf_flower.predict(metricTrain[i]): #if it is a flower... 
-        #    print(clf_species.predict(metricTrain[i]))
-        #    y_pred += [clf_species.predict(metricTrain[i])]
-        #else: 
-        #    y_pred += [clf_flower.predict(metricTrain[i])]
+        #y_pred.extend(clf_species.predict(metricTrain[i])) #Currently only predicting from the species alg. 
+        flower = clf_flower.predict(metricTrain[i].reshape(1,-1)) #Check if this is a flower or not. The data is a single sample, so reshape to avoid deprecation warning. 
+        if flower: #Check if the sample is a flower 
+            y_pred.extend(clf_species.predict(metricTrain[i].reshape(1,-1))) #Get the species prediction. Reshape to avoid deprecation. 
+        else: 
+            y_pred += [flower]
+    y_pred = [int(k) for k in y_pred]
     print(classification_report(y_true, y_pred))
+    return y_true, y_pred
 
 def featOrder(imps): 
     """Sort the importance list to return the feature numbers by order of importance.""" 

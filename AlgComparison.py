@@ -3,11 +3,13 @@ from Verification import *
 import numpy as np
 from sklearn.cross_validation import train_test_split
 
-f = open('TotalMetricTraining.txt', 'r') 
+#f = open('TotalMetricTraining.txt', 'r') 
+f = open('metricTrain.txt', 'r')
 data = f.read() 
 metricTrain = eval(data) 
 
-g = open('TotalSpeciesTraining.txt', 'r') 
+#g = open('TotalSpeciesTraining.txt', 'r') 
+g = open('speciesTrain.txt', 'r')
 data = g.read() 
 speciesTrain = eval(data) 
 
@@ -25,7 +27,7 @@ clfKNN = classifyKNN(metric_train, species_train)
 #clfPercep = classifyPerceptron(metric_train, species_train)
 clfTree = classifyTree(metric_train, species_train)
 
-clf_flower =  classifyKNN(metric_train, flower_train)
+clf_flower =  classifyTree(metric_train, flower_train)
 
 print('Random Forest Scores')
 classReport(metric_test, species_test, clfRF)
@@ -59,7 +61,21 @@ scores = VerifyTenfold(speciesTrain, metricTrain, clfTree)
 print('Tree', np.mean(scores) )
 
 print('2 stage scores') 
-classReport_2stage(metric_test, species_test, clf_flower, clfRF)
-scores = VerifyTenfold(speciesTrain, metricTrain, clfRF)
-print('2 stage', np.mean(scores))
+flower_locations = numpy.nonzero(species_train) #Find all of the nonzero (i.e. actually flower) elements 
+species_train = np.asarray(species_train) #convert to a numpy array. 
+metric_train = np.asarray(metric_train)
+species_train_nonzero = species_train[list(flower_locations[0])] #Create an array containing only the data points for flowers. 
+metric_train_nonzero = metric_train[list(flower_locations[0])] #Corresponding metrics 
 
+clfRF_stage2 = classifyRF(metric_train_nonzero, species_train_nonzero)  #Train a new classifier on only flower data
+clfTree_stage2 = classifyTree(metric_train_nonzero, species_train_nonzero)
+clfKNN_stage2 = classifyKNN(metric_train_nonzero, species_train_nonzero) 
+#clfSVM_stage2 = classifySVM(metric_train_nonzero, species_train_nonzero) 
+clfSGD_stage2 = classifySGD(metric_train_nonzero, species_train_nonzero)
+clfPercep_stage2 = classifyPerceptron(metric_train_nonzero, species_train_nonzero)
+
+
+y_true, y_pred = classReport_2stage(metric_test, species_test, clf_flower, clfPercep_stage2) 
+#scores = VerifyTenfold(speciesTrain, metricTrain, clfRF)
+#print('2 stage', np.mean(scores))
+print(classification_report(y_true, y_pred))

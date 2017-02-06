@@ -84,7 +84,7 @@ def SpeciesTest(trainingMode):
         speciesTrain.extend(speciesTrainTransect) #Combine the species lists. 
         
         flowerTrain = [1 if i else 0 for i in speciesTrain] #create a list of species training that only denotes flower vs. non-flower 
-    
+        
         ### Save the training set  - metrics
         f = open('TransectTrainSpecies.txt', 'w')
         print >> f, list(metricTrain)
@@ -121,10 +121,9 @@ def SpeciesTest(trainingMode):
         metricTrain = metricTrainTransect 
         metricTrain.extend(metricTrainResearch) #add the research data at the end of the training list for metrics. 
         speciesTrain = speciesTrainTransect 
-        speciesTrain = np.append(speciesTrainTransect, speciesListResearch)
+        speciesTrain = np.append(speciesTrainTransect, speciesTrainResearch)
         
-        #speciesTrain.append(speciesTrainResearch) #also add the research data at the end of the training list for species. 
-
+        #speciesTrain.append(speciesTrainResearch) #also add the research data at the end of the training list for species.
       
         flowerTrain = [1 if i else 0 for i in speciesTrain] #create a list of species training that only denotes flower vs. non-flower 
         #Save all of the training data to files so that it can be read in without calculation in the future. 
@@ -144,11 +143,11 @@ def SpeciesTest(trainingMode):
         f.close()
 
     if trainingMode == 6: 
-        f = open('metricTraint.txt', 'r') 
+        f = open('metricTrain.txt', 'r') 
         data = f.read() 
         metricTrain = eval(data) 
         
-        g = open('specesTrain.txt', 'r') 
+        g = open('speciesTrain.txt', 'r') 
         data = g.read() 
         speciesTrain = eval(data) 
         
@@ -156,6 +155,7 @@ def SpeciesTest(trainingMode):
         data = h.read() 
         flowerTrain = eval(data)
 
+        speciesTrain = [int(i) for i in speciesTrain]
     #Training data has been acquired. Scale the metrics. 
     scaledMetrics, scaler = scaleMetrics(metricTrain) #scale the metrics and return both the scaled metrics and the scaler used. 
     kbest = SelectKBest(k=5) 
@@ -163,9 +163,17 @@ def SpeciesTest(trainingMode):
     
     #Train the classifier (or classifiers in a 2 stage process). 
     clf_flower = classifyKNN(newMetrics, flowerTrain) #fit a function that only considers flower vs. non-flower 
-    clf_species = classifyTree(newMetrics, speciesTrain) #Fit a function 
     
-
+    #Find all of the zero training points in the set. 
+    flower_locations = numpy.nonzero(speciesTrain) #Find all of the nonzero (i.e. actually flower) elements 
+    speciesTrain = np.asarray(speciesTrain) #convert to a numpy array. 
+    newMetrics = np.asarray(newMetrics)
+    speciesTrain_nonzero = speciesTrain[list(flower_locations[0])] #Create an array containing only the data points for flowers. 
+    metricTrain_nonzero = newMetrics[list(flower_locations[0])] #similarly reduce the metrics array to only the corresponding metrics. 
+    
+    clf_species = classifyTree(metricTrain_nonzero, speciesTrain_nonzero) #Fit a function to distinguish between species. 
+    
+    
     #return clf, speciesTrain, newMetrics, scaler, tileSize, overlap, kbest
     species = classifyMap_2stage(clf_species, clf_flower, speciesTrain, newMetrics, scaler, imageName, tileSize, overlap, kbest)
     #classifyMap(clf_species, speciesTrain, newMetrics, scaler, imageName, tileSize, overlap, kbest)   
@@ -183,5 +191,5 @@ def parameterSearch():
 
 # Allows us to simply run SpeciesTest without needing to load it in first.
 if __name__ == '__main__':
-        SpeciesTest(5) #currently running with training mode five. 
+        SpeciesTest(6) #currently running with training mode five. 
 

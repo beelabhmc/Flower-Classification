@@ -4,20 +4,20 @@ import numpy as np
 from sklearn.cross_validation import train_test_split
 
 #f = open('TotalMetricTraining.txt', 'r') 
-f = open('metricTrain.txt', 'r')
+f = open('metricTrainResearch.txt', 'r')
 data = f.read() 
 metricTrain = eval(data) 
 
 #g = open('TotalSpeciesTraining.txt', 'r') 
-g = open('speciesTrain.txt', 'r')
+g = open('speciesTrainResearch.txt', 'r')
 data = g.read() 
 speciesTrain = eval(data) 
 
 #split the data set. 
 metric_train, metric_test, species_train, species_test = train_test_split(metricTrain, speciesTrain, test_size=0.5, random_state=0)
 
-species_train = [i if i<3 else 0 for i in species_train]
-species_test = [i if i<3 else 0 for i in species_test]
+#species_train = [i if i<3 else 0 for i in species_train]
+#species_test = [i if i<3 else 0 for i in species_test]
 flower_train = [1 if i else 0 for i in species_train] #create a flower training set 
         
 clfRF = classifyRF(metric_train, species_train) 
@@ -70,12 +70,11 @@ metric_train_nonzero = metric_train[list(flower_locations[0])] #Corresponding me
 clfRF_stage2 = classifyRF(metric_train_nonzero, species_train_nonzero)  #Train a new classifier on only flower data
 clfTree_stage2 = classifyTree(metric_train_nonzero, species_train_nonzero)
 clfKNN_stage2 = classifyKNN(metric_train_nonzero, species_train_nonzero) 
-#clfSVM_stage2 = classifySVM(metric_train_nonzero, species_train_nonzero) 
 clfSGD_stage2 = classifySGD(metric_train_nonzero, species_train_nonzero)
 clfPercep_stage2 = classifyPerceptron(metric_train_nonzero, species_train_nonzero)
 
 
-y_true, y_pred = classReport_2stage(metric_test, species_test, clf_flower, clfPercep_stage2) 
+y_true, y_pred = classReport_2stage(metric_test, species_test, clf_flower, clfRF_stage2) 
 #scores = VerifyTenfold(speciesTrain, metricTrain, clfRF)
 #print('2 stage', np.mean(scores))
 print(classification_report(y_true, y_pred))

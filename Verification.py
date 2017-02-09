@@ -96,10 +96,10 @@ def VerifyTenfold(speciesList, metricList, est):
     #Use the full set for testing 
     M_train = metricList 
     d_train = speciesList
-    for i in range(len(d_train)): 
+    for i in range(len(d_train)): #Limit the test to only the top 2 species. 
         if d_train[i] > 2: 
             d_train[i] = 0 
-    
+
     scaledMetrics, scaler = scaleMetrics(M_train)
     kbest = SelectKBest(k=18) 
     kbest.fit(M_train, d_train)

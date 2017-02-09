@@ -111,47 +111,49 @@ def SpeciesTest(trainingMode):
         
         flowerTrain = [1 if i else 0 for i in speciesTrain]
     if trainingMode == 5: #Training based on segmented research area images. 
-        transectIms, transectSpecies = createAllTransectTraining() #Get a list of images and species for the transects. 
-        metricTrainTransect, speciesTrainTransect = allTrainMetrics(transectIms, transectSpecies) #get training metrics for transects. 
+        #transectIms, transectSpecies = createAllTransectTraining() #Get a list of images and species for the transects. 
+       # metricTrainTransect, speciesTrainTransect = allTrainMetrics(transectIms, transectSpecies) #get training metrics for transects. 
         #Input the segmented research area images. 
         imListResearch, coordLeft, coordRight, speciesListResearch, numFlowers = createAllResearchTraining()  #Get all of the training images and species information 
         speciesListResearch = numericalSpecies(speciesListResearch) #Convert to a numerical species (i.e. 1,2,3 instead of names)
         metricTrainResearch, speciesTrainResearch = tiledTraining(imListResearch, speciesListResearch, n, overlap) #get the metrics for segmented research images. 
         #Combine the two kinds of training data to create one comprehensive list. 
-        metricTrain = metricTrainTransect 
-        metricTrain.extend(metricTrainResearch) #add the research data at the end of the training list for metrics. 
-        speciesTrain = speciesTrainTransect 
-        speciesTrain = np.append(speciesTrainTransect, speciesTrainResearch)
+        #metricTrain = metricTrainTransect 
+        #metricTrain.extend(metricTrainResearch) #add the research data at the end of the training list for metrics. 
+        #speciesTrain = speciesTrainTransect 
+        #speciesTrain = np.append(speciesTrainTransect, speciesTrainResearch)
         
         #speciesTrain.append(speciesTrainResearch) #also add the research data at the end of the training list for species.
       
-        flowerTrain = [1 if i else 0 for i in speciesTrain] #create a list of species training that only denotes flower vs. non-flower 
+        flowerTrain = [1 if i else 0 for i in speciesTrainResearch] #create a list of species training that only denotes flower vs. non-flower 
         #Save all of the training data to files so that it can be read in without calculation in the future. 
         ### Save the training set - metrics 
-        f = open('metricTrain.txt', 'w')
-        print >> f, list(metricTrain)
+        f = open('metricTrainResearch.txt', 'w')
+        print >> f, list(metricTrainResearch)
         f.close()
 
         ### Save the training set - species 
-        f = open('speciesTrain.txt', 'w')
-        print >> f, list(speciesTrain)
+        f = open('speciesTrainResearch.txt', 'w')
+        print >> f, list(speciesTrainResearch)
         f.close()
         
         ### Save the training set - flower vs. non-flower 
-        f = open('FlowerTrain.txt', 'w')
+        f = open('FlowerTrainResearch.txt', 'w')
         print >> f, list(flowerTrain)
         f.close()
-
+        metricTrain =metricTrainResearch 
+        speciesTrain = speciesTrainResearch
+        
     if trainingMode == 6: 
-        f = open('metricTrain.txt', 'r') 
+        f = open('metricTrainResearch.txt', 'r') 
         data = f.read() 
         metricTrain = eval(data) 
         
-        g = open('speciesTrain.txt', 'r') 
+        g = open('speciesTrainResearch.txt', 'r') 
         data = g.read() 
         speciesTrain = eval(data) 
         
-        h = open('FlowerTrain.txt', 'r') 
+        h = open('FlowerTrainResearch.txt', 'r') 
         data = h.read() 
         flowerTrain = eval(data)
 
@@ -190,6 +192,6 @@ def parameterSearch():
     return clf
 
 # Allows us to simply run SpeciesTest without needing to load it in first.
-if __name__ == '__main__':
-        SpeciesTest(6) #currently running with training mode five. 
+#if __name__ == '__main__':
+        #SpeciesTest(5) #currently running with training mode five. 
 

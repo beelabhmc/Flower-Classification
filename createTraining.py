@@ -35,8 +35,8 @@ def tiledTraining(imList, species, overlap, n):
         length = size[1] 
         smallTileSize = int(overlap*n) #Set the tilesize and overlap you want to train on. This should match the size you will test on. 
     # Extract all tiles using a specific overlap (overlap depends on n). This happens for each image.
-        for k in range(0,width -int( overlap*n), int(overlap*n)): #Go through the entire image 
-            for j in range(0, length - int(overlap*n), int(overlap*n)): 
+        for k in range(0,width -smallTileSize, smallTileSize): #Go through the entire image 
+            for j in range(0, length - smallTileSize, smallTileSize): 
                 box = (k,j,k+smallTileSize, j+smallTileSize)  #edge coordinates of the current rectangle. 
                 newImage = image.crop(box) #pull out the desired rectangle
             ### METRIC CALCULATIONS: Get the metrics for each subrectangle in the image. 
@@ -90,10 +90,12 @@ def numericalSpecies(species):
             newSpecies[i] = 15
         elif currentSpecies == "Camissoniopsis bistorta": 
             newSpecies[i] = 16
-        elif currentSpecies == "Cryptantha Species": 
+        elif currentSpecies == "Cryptantha intermedia": 
             newSpecies[i] = 17
         elif currentSpecies == "Apiastrum angustifolium": 
-            newSpecies[i] = 18      
+            newSpecies[i] = 18   
+        elif currentSpecies == "Salvia apiana": 
+            newSpecies[i] = 19    
         else: 
             newSpecies[i] = 0 # species 0 for no flowers or some random unknown value. 
     return newSpecies

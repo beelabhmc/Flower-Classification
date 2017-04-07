@@ -8,8 +8,10 @@ from classification import *
 from sklearn.metrics import classification_report
 from sklearn.feature_selection import SelectKBest
 from sklearn.cross_validation import train_test_split
+from sklearn.metrics import confusion_matrix
 import sklearn.utils.multiclass as mc
 import numpy as np 
+from PIL import ImageChops as IC
 def GetTrainingMetrics(imageName, trainingType, densityList): 
     """Calculates or reads in pre calculated metrics on a training set to be used later."""
     
@@ -115,7 +117,7 @@ def VerifyTenfold(speciesList, metricList, est):
     return scores
 
     
-def VerifyTenfold_2stage(speciesList, metricList, clf_flower, clf_species): 
+def VerifyTenfold_2stage(speciesList, metricList, flowerList, flowerMetricList, clf_flower, clf_species): 
     """Verification process using K-fold verification to test the accuracy of the algorithm.
     Takes in speciesList, the training species classes. 
     metricList, the training image metrics. 
@@ -131,10 +133,23 @@ def VerifyTenfold_2stage(speciesList, metricList, clf_flower, clf_species):
 
    # est = classifyTree(M_train, d_train)
     for i in range(10): #cross-validate 10 times 
-        X_train, X_test, y_train, y_test = cross_validation.train_test_split(metricList, speciesList, test_size=0.4, random_state=0) #split the data. 
-        est_flower = clf_flower.fit(X_train, y_train_flowers) #fit the estimator for flowers. 
-        est_species = clf_species.fit(X_train, y_train_species) #fit the estimator for species. 
+        X_train_species, X_test_species, y_train_species, y_test_species = cross_validation.train_test_split(metricList, speciesList, test_size=0.4, random_state=random.choice(50)) #split the data. 
+        X_train_flowers, X_test_flowers, y_train_flowers, y_test_flowers = cross_validation.train_test_split(flowerMetricList, flowerList, test_size=0.4, random_state=random.choice(50)) #split the data. 
+
+        clf_flower.fit(X_train_flowers, y_train_flowers) #fit the estimator for flowers. 
+        clf_species.fit(X_train_species, y_train_species) #fit the estimator for species. 
+    
+        flower_predict = clf_flower.predict(X_test_flowers) #predict flower vs. non-flower for the test set. 
+        species_predict = clf_species.predict(X_test_species) #Predict the species for the test set. 
         
+        correct_flowers = 0 
+        
+        #for i in range(len(flower_predict)): 
+        #    if flower_predict(i):  #If we have predicted that this is a flower 
+        #        if y_test_flowers(i): #If this was in fact a flower 
+        #            correct_flowers += 1
+        #            if species_predict(i) == y_test_species 
+                
         #Score each set of testing and training results. 
     return scores
         
@@ -161,6 +176,20 @@ def classReport_2stage(metricTrain, speciesTrain, clf_flower, clf_species):
     print(classification_report(y_true, y_pred))
     return y_true, y_pred
 
+def getConfusionMatrix(metricTrain, speciesTrain, clf_flower, clf_species): 
+    y_true = speciesTrain
+    y_pred = []
+    metricTrain = np.asarray(metricTrain) #Transform the data into a numpy array. 
+    for i in range(len(metricTrain)): #for each point in the training set. 
+        #y_pred.extend(clf_species.predict(metricTrain[i])) #Currently only predicting from the species alg. 
+        flower = clf_flower.predict(metricTrain[i].reshape(1,-1)) #Check if this is a flower or not. The data is a single sample, so reshape to avoid deprecation warning. 
+        if flower: #Check if the sample is a flower 
+            y_pred.extend(clf_species.predict(metricTrain[i].reshape(1,-1))) #Get the species prediction. Reshape to avoid deprecation. 
+        else: 
+            y_pred += [flower]
+    y_pred = [int(k) for k in y_pred]
+    conf_matrix = confusion_matrix(y_true, y_pred) #Get the confusion matrix 
+    return conf_matrix #Output the confusion matrix so that it can be visualized, etc. 
 def featOrder(imps): 
     """Sort the importance list to return the feature numbers by order of importance.""" 
     #return sorted(range(len(imps)), key = lambda k:imps[k])
@@ -205,3 +234,83 @@ def testFeatures(thresh, kfeatures):
     kbest.fit(scaledMetrics, speciesTrain)
     bestIndex = kbest.get_support()
     return metricTrain, threshIndex, bestIndex
+    
+def combineMasks(maskList, maskPath): 
+    """Takes in an list of mask image names and combines them into one full mask with all plants marked""" 
+    #Currently assuming only 1 species. 
+    imList= [] 
+    arrList = []
+    for imName in maskList: # For each mask image you have... 
+        newIm = Image.open(IMAGE_PATH + maskPath + imName) #Open the image
+        newarr = np.asarray(newIm) #Make the image an array 
+        imList += [newIm] #Add that image object to a list 
+        arrList += [newarr] #add the array to a list of arrays
+        
+    combinedMask = Image.fromarray(sum(arrList)) #Add all of the images together. 
+    #This works because non-flowers are at (0,0,0) in each image and thus won't overflow when added to a color value for flowers. 
+    #If two flower patches happen to overlap they could overflow, however this would simply produce a different non-black color and thus be counted as a flower in convertMask. 
+    fp = IMAGE_PATH + maskPath + 'combinedMask.jpg'
+    combinedMask.save(fp) #Save the combined mask image for future use. 
+    return combinedMask #Also return the combined mask image. 
+
+def convertMask(maskName, maskPath): 
+    """Convert from a mask image to a list of species""" 
+    maskIm = Image.open(IMAGE_PATH + maskPath + maskName)
+    [width, height] = maskIm.size
+    speciesList = np.zeros((width, height))
+    for i in range(width): 
+        for j in range(height): 
+            currentPix = maskIm.getpixel((i,j)) 
+            if currentPix == (0,0,0): #If the current pixel is black 
+                speciesList[i,j] = 0 #The current location is ground 
+            else: 
+                speciesList[i,j] = 1 #The current location is penstemon 
+    return speciesList
+    
+def compareToMask(species, mask): 
+    """Comapre the results of the machine learning algorithm to a hand labelled mask.""" 
+    
+    #First we need to load in the mask as a Python Image. 
+    maskName = 'Research_May15_small_mask_0.png'
+    maskIm = Image.open(IMAGE_PATH + 'research_may15/' + maskName) #maskIm is the same size as the original image 
+    outputIm = IC.duplicate(maskIm)
+    
+    #Finally determine a comparison scheme and way to plot for the four kinds of results: 
+    #Correct Identifications: 
+        #species = penstemon, mask = penstemon: White (255,255,255) , penstAgree
+        #species = ground, mask = ground: Black (0,0,0) , groundAgree
+    #Incorrect Identifications: 
+        #species = penstemon, mask = ground: Purple (132, 37, 186) , penst_ground 
+        #species = ground, mask = penstemon: Green (32, 165, 76) , ground_penst
+    ground_ground = 0 
+    penst_penst = 0 
+    ground_penst = 0 
+    penst_ground = 0 
+    [width, height] = maskIm.size
+    for i in range(width): 
+        for j in range(height): 
+            algSpecies = species[i,j] #determine the species output by the algorithm 
+            maskSpecies = mask[i,j] #determine the species labeled in the mask 
+            if algSpecies == 0: #If the algorithm returned ground 
+                if maskSpecies == 0: #Both agree on ground 
+                    outputIm.putpixel((i,j), (0,0,0)) #Set the color to black 
+                    ground_ground += 1 #Add to the counter 
+                elif maskSpecies ==1: #Alg ground, mask is penstemon 
+                    outputIm.putpixel((i,j), (228, 15,15)) #Set the color to green (32, 165, 76)
+                    ground_penst += 1 
+            elif algSpecies ==1: 
+                if maskSpecies ==1: #Both agree on penstemon 
+                    outputIm.putpixel((i,j), (255,255,255)) #Set the color to white
+                    penst_penst += 1 
+                elif maskSpecies == 0: #alg is penstemon, mask is ground 
+                    outputIm.putpixel((i,j), (132, 27, 186)) #Set the color to purple 
+                    penst_ground += 1     
+    outputIm.show()
+    return [outputIm, ground_ground, ground_penst, penst_penst, penst_ground]
+    
+    
+    
+    
+    
+    
+    

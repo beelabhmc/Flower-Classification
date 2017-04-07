@@ -47,12 +47,10 @@ def getSub(n, imageName, overlap):
     
     MetricDict = {} #initialize empty dict. 
     # Extract all tiles using a specific overlap (overlap depends on n)
-    for i in range(0,width -int( overlap*n), int(overlap*n)): #Go through the entire image 
-        for j in range(0, length - int(overlap*n), int(overlap*n)): 
-            box = (i,j,i+smallTileSize, j+smallTileSize)  #edge coordinates of the next rectangle. 
+    for i in range(0,width -n, int(overlap*n)): #Go through the entire image 
+        for j in range(0, length - n, int(overlap*n)): 
+            box = (i,j,i+n, j+n)  #edge coordinates of the next rectangle. 
             newImage = image.crop(box) #pull out the desired rectangle
-            ### METRIC CALCULATIONS - Time counters commented out for now. 
-
             Metrics = getMetrics(newImage) #calculate all of the metrics on this cropped out image. 
             MetricDict[(i,j)] = Metrics #add these metrics to the metric dictionary with the upper left coordinates as the key. 
     return MetricDict
@@ -249,6 +247,7 @@ def textureAnalysis(im):
     
     # loop across image
     count = 0
+    pixList = []
     for i in range(0,width-n,n):
         for j in range(0,height-n,n):
             
@@ -264,6 +263,7 @@ def textureAnalysis(im):
             # greater than threshold
             if ((max(intensity) - min(intensity)) > threshold):
                 count += 1
+                pixList += [(i,j)]
                 
     # calculate the percentage of high texture grids
     

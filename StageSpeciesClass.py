@@ -1,5 +1,6 @@
-from ImageProcess import * #Import the same functions from image process for density stuff. 
+from ImageProcess import * #Import the same functions from image process for species stuff. 
 from Constants import *
+import numpy as np
 #No probabilities included 
 
 def oneSpeciesOverlap_2stage((i,j), n, imageName, overlap, subTileDict, fit_species, fit_flowers, scaler, reduceFeatures, featureSelect): 
@@ -8,24 +9,31 @@ def oneSpeciesOverlap_2stage((i,j), n, imageName, overlap, subTileDict, fit_spec
     shiftSize = int(n*overlap)
     #How many subtiles are in the width of the image? 
     numTiles =int( 1/overlap )
-    metricTotal = len(subTileDict[(0,0)])*[0.0]
-    for k in range(numTiles): 
-        for m in range(numTiles): 
-           # print (k,m)
-            newMetrics = subTileDict[(i + m*shiftSize, j + k*shiftSize)]
-            metricTotal = map(add, metricTotal, newMetrics)
-  #  print metricTotal
-    num = 1/(overlap**2)
-    avgMetric = [a/num for a in metricTotal] #Compute the average 
-    # print avgMetric
+    newMetrics = subTileDict[(i, j)]
+  #  metricTotal = len(subTileDict[(0,0)])*[0.0]
+  #  for k in range(numTiles): 
+  #      for m in range(numTiles): 
+  #         # print (k,m)
+  #          newMetrics = subTileDict[(i + m*shiftSize, j + k*shiftSize)]
+  #          metricTotal = map(add, metricTotal, newMetrics)
+  ##  print metricTotal
+  #  num = 1/(overlap**2)
+  #  avgMetric = [a/num for a in metricTotal] #Compute the average 
+  #  # print avgMetric
+    #avgMetric = np.asarray(avgMetric) #transform into a numpy array. 
+    avgMetric = np.asarray(newMetrics)
     scaledMetric = scaler.transform(avgMetric) #Scale the metric 
     if reduceFeatures: 
         newMetric = featureSelect.transform(scaledMetric)
-    flower = fit_flowers.predict(newMetric) #determine if this is a flower or not 
-    if flower: 
-        species = fit_species.predict(newMetric) #Find which species this is. 
-    else: 
-        species = flower #if not a flower, it can't have a species. 
+    else:
+        newMetric = scaledMetric
+    print(newMetric)
+    flower = fit_flowers.predict(newMetric.reshape(1,-1)) #determine if this is a flower or not 
+    if flower: #If it is a flower 
+        species = fit_species.predict(newMetric.reshape(1,-1)) #Find which species this is. 
+    else: #If it is not a flower...
+        species = flower #if not a flower, it can't have a species.
+        print(species)
         
     #speciesProb = fit.predict_proba(scaledMetric) #Calculate the probability of the species. 
    # return list(species), list(speciesProb) #return species and matching prob of those species. 
@@ -37,9 +45,7 @@ def allSpeciesOverlap_2stage(n, imageName, overlap,fit_species, fit_flowers, sca
     width = imageSize[0]
     height = imageSize[1] 
    # densityList = []
-    
-    subTileDict = getSub(n, imageName, overlap) #Compute the metrics on subtiles 
-
+    subTileDict = getSub(n, imageName, overlap) #Compute the metrics on subtiles
     allSpecies = []
     allProb = []
     shiftSize = int(n*overlap)
@@ -48,7 +54,6 @@ def allSpeciesOverlap_2stage(n, imageName, overlap,fit_species, fit_flowers, sca
           #  print (m,k)
           #  currentSpecies, currentProb = oneSpeciesOverlap((m,k), n, imageName, overlap, subTileDict, fit, scaler)
             currentSpecies = oneSpeciesOverlap_2stage((m,k), n, imageName, overlap, subTileDict, fit_species, fit_flowers, scaler, reduceFeatures, featureSelect)
-
             allSpecies += currentSpecies
           #  allProb += currentProb
     return allSpecies #return one map of species and one map of the corresponding probability. 
@@ -75,6 +80,7 @@ def SpeciesMapShort(species,imageName, overlap, n):
     grid_x, grid_y = numpy.mgrid[0:width, 0:height] #create a grid to interpolate over.
 
    # print(species)
+    species = [x == 3 for x in species] 
     species = numpy.array(species)
     data = griddata((pointsx, pointsy), species, (grid_x, grid_y), method = 'nearest')
     
@@ -86,9 +92,9 @@ def SpeciesMapShort(species,imageName, overlap, n):
     mapIm = Image.open(imageName)
     plt.imshow(mapIm)
     x = plt.colorbar(fig) #show the colorbar
-    plt.savefig(imageName + '_Classes.jpg') #Save the figure. Change the name here or rename the file after it has been saved. 
+    plt.savefig(IMAGEPATH_RESULTS + imageName[7:-5] + '_Classes.jpg') #Save the figure in the results folder. 
 
-def classifyMap_2stage(classifier_species, classifier_flowers, densityList, metricList,scaler,imageName, tileSize, overlap, featureSelect):
+def classifyMap_2stage(classifier_species, classifier_flowers, speciesList, metricList,scaler,imageName, tileSize, overlap, featureSelect):
     """Classify map calculates all of the species classes for an image and produces a map 
     of those species overlaid with the original map.
     classifier - a trained classification algorithm. 
@@ -98,7 +104,7 @@ def classifyMap_2stage(classifier_species, classifier_flowers, densityList, metr
     tileSize - the desired size of tile to use in calcualting metrics (int)
     overlap - how much the tiles should overlap with each other
     featureSelect -  the test algorithm that will select which features to use. Only relevant if reduceFeatures is 1. """
-    reduceFeatures = 1 #reduce the number of features if 1, if 0 use all features.
+    reduceFeatures = 0 #reduce the number of features if 1, if 0 use all features.
     Species = allSpeciesOverlap_2stage(tileSize, imageName, overlap,classifier_species, classifier_flowers, scaler, reduceFeatures, featureSelect) #Find all of the species classes. 
     SpeciesMapShort(Species, imageName, overlap, tileSize) #Display the map. 
     return Species #return the calculated species so that they can be analyzed for other purposes, i.e. clustering, etc. 

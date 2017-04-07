@@ -18,8 +18,8 @@ def SpeciesTest(trainingMode):
     #speciesTrain = [1,3,2,5,2,5,4,6,3,7,4,1,5,4,3,5,7,8,4,2,5,9,7,4,3,2,7,6,8,7,6,5,6,7,9,0,5,3,1,2,3,2,5,6,0,6,0,6,0,5]
 
     #BSSImList, BSS_Train = BSSTrain()
-    imageName = 'Research_May20_crop.jpg' 
-    tileSize = 50  #define the tilesize and overlap to be used in training and testing. 
+    imageName = 'images/Research_May15_small.jpeg' 
+    tileSize = 100  #define the tilesize and overlap to be used in training and testing. 
     overlap = 0.2
     n = tileSize
 
@@ -28,17 +28,8 @@ def SpeciesTest(trainingMode):
         #2: Read in from previously saved data for transects
         #3: Transect and research, with research unsegmented (left at original size)
         #4: Read in from previously saved data for transects and research. 
-        #5: Transect and research, with research segmented further to match test size. 
+        #5: Research, with research segmented further to match test size. 
     
-    #BSSImList, BSS_Train = BSSTrain() 
-
-    #
-    #imageList = BSSImList #choose an image list and corresponding training list 
-    #
-    #speciesList = BSS_Train
-    #
-    #
-    #metricTrain, speciesTrain = allTrainMetrics(imageList, speciesList)
     if trainingMode == 1:
         FullImList, FullSpeciesList = createAllTransectTraining()
         metricTrain, speciesTrain = allTrainMetrics(FullImList, FullSpeciesList) #get training metrics 
@@ -111,61 +102,80 @@ def SpeciesTest(trainingMode):
         
         flowerTrain = [1 if i else 0 for i in speciesTrain]
     if trainingMode == 5: #Training based on segmented research area images. 
-        #transectIms, transectSpecies = createAllTransectTraining() #Get a list of images and species for the transects. 
-       # metricTrainTransect, speciesTrainTransect = allTrainMetrics(transectIms, transectSpecies) #get training metrics for transects. 
+        transectIms, transectSpecies = createBSSTraining() #Get a list of images and species for the transects. 
+        transectSpecies = numpy.asarray(transectSpecies)
+        transectIms = numpy.asarray(transectIms)
+        nonFlowerLocations = numpy.nonzero(transectSpecies)   
+        nonFlowerSpecies = numpy.delete(transectSpecies, nonFlowerLocations, None)
+        nonFlowerIms = numpy.delete(transectIms, nonFlowerLocations, None)
+        
+        nonFlowerIms = np.asarray(nonFlowerIms) #Convert to a numpy array to allow for index selection
+        nonFlowerSpecies = np.asarray(nonFlowerSpecies) 
+        
+        #indices = np.random.choice(len(nonFlowerSpecies), 5) #Randomly choose 300 samples of non-flowers 
+        #usednonFlowerIms = nonFlowerIms[indices] #Use only the randomly chosen images. 
+        #usednonFlowerSpecies = nonFlowerSpecies[indices]
+                                
+        metricTrainTransect, speciesTrainTransect = tiledTraining(nonFlowerIms, nonFlowerSpecies, n, overlap) #get training metrics for transects, non-flower only. 
+        
+        #Now that you have all of the image, randomly choose several to use so that teh data set remains balanced. 
+        indices = np.random.choice(len(metricTrainTransect), 50) #Randomly choose 50 sample images of non-flowers 
+        metricTrainTransect = np.asarray(metricTrainTransect) 
+        speciesTrainTransect = np.asarray(speciesTrainTransect)
+        metricTrainTransect = metricTrainTransect[indices] 
+        speciesTrainTransect = speciesTrainTransect[indices]
+        
         #Input the segmented research area images. 
         imListResearch, coordLeft, coordRight, speciesListResearch, numFlowers = createAllResearchTraining()  #Get all of the training images and species information 
-        speciesListResearch = numericalSpecies(speciesListResearch) #Convert to a numerical species (i.e. 1,2,3 instead of names)
-        metricTrainResearch, speciesTrainResearch = tiledTraining(imListResearch, speciesListResearch, n, overlap) #get the metrics for segmented research images. 
+        speciesListResearch_num = numericalSpecies(speciesListResearch) #Convert to a numerical species (i.e. 1,2,3 instead of names)
+        metricTrainResearch, speciesTrainResearch = tiledTraining(imListResearch, speciesListResearch_num, n, overlap) #get the metrics for segmented research images. 
         #Combine the two kinds of training data to create one comprehensive list. 
-        #metricTrain = metricTrainTransect 
-        #metricTrain.extend(metricTrainResearch) #add the research data at the end of the training list for metrics. 
-        #speciesTrain = speciesTrainTransect 
-        #speciesTrain = np.append(speciesTrainTransect, speciesTrainResearch)
+        metricTrain = np.concatenate((metricTrainTransect, metricTrainResearch), axis = 0) #add the research data at the end of the training list for metrics. 
+        speciesTrain = np.concatenate((speciesTrainTransect, speciesTrainResearch), axis = 0)
         
-        #speciesTrain.append(speciesTrainResearch) #also add the research data at the end of the training list for species.
-      
-        flowerTrain = [1 if i else 0 for i in speciesTrainResearch] #create a list of species training that only denotes flower vs. non-flower 
+            
+        flowerTrain = [1 if i else 0 for i in speciesTrain] #create a list of species training that only denotes flower vs. non-flower 
         #Save all of the training data to files so that it can be read in without calculation in the future. 
         ### Save the training set - metrics 
-        f = open('metricTrainResearch.txt', 'w')
-        print >> f, list(metricTrainResearch)
-        f.close()
+#        f = open('metricTrainFull.txt', 'w')
+#        print >> f, list(metricTrain)
+#        f.close()
+#
+#        ### Save the training set - species 
+#        f = open('speciesTrainFull.txt', 'w')
+#        print >> f, list(speciesTrain)
+#        f.close()
 
-        ### Save the training set - species 
-        f = open('speciesTrainResearch.txt', 'w')
-        print >> f, list(speciesTrainResearch)
-        f.close()
-        
+        np.save('metricTrainFull', metricTrain)
+        np.save('speciesTrainFull', speciesTrain)
+#        
         ### Save the training set - flower vs. non-flower 
-        f = open('FlowerTrainResearch.txt', 'w')
+        f = open('FlowerTrainFull.txt', 'w')
         print >> f, list(flowerTrain)
         f.close()
-        metricTrain =metricTrainResearch 
-        speciesTrain = speciesTrainResearch
         
     if trainingMode == 6: 
-        f = open('metricTrainResearch.txt', 'r') 
+        f = open('metricTrainFull.txt', 'r') 
         data = f.read() 
         metricTrain = eval(data) 
         
-        g = open('speciesTrainResearch.txt', 'r') 
+        g = open('speciesTrainFull.txt', 'r') 
         data = g.read() 
         speciesTrain = eval(data) 
         
-        h = open('FlowerTrainResearch.txt', 'r') 
+        h = open('FlowerTrainFull.txt', 'r') 
         data = h.read() 
         flowerTrain = eval(data)
 
         speciesTrain = [int(i) for i in speciesTrain]
-    #Training data has been acquired. Scale the metrics. 
+    #Training data has been acquired. Scale the metrics.
+    metricTrain = np.asarray(metricTrain) 
     scaledMetrics, scaler = scaleMetrics(metricTrain) #scale the metrics and return both the scaled metrics and the scaler used. 
-    kbest = SelectKBest(k=5) 
+    kbest = SelectKBest(k = 19) 
     newMetrics = kbest.fit_transform(scaledMetrics, speciesTrain) #Select onlyk the k best metrics. (Comment out to use all metrics.)
-    
     #Train the classifier (or classifiers in a 2 stage process). 
     clf_flower = classifyKNN(newMetrics, flowerTrain) #fit a function that only considers flower vs. non-flower 
-    
+    print(len(newMetrics[0]))
     #Find all of the zero training points in the set. 
     flower_locations = numpy.nonzero(speciesTrain) #Find all of the nonzero (i.e. actually flower) elements 
     speciesTrain = np.asarray(speciesTrain) #convert to a numpy array. 
@@ -174,7 +184,6 @@ def SpeciesTest(trainingMode):
     metricTrain_nonzero = newMetrics[list(flower_locations[0])] #similarly reduce the metrics array to only the corresponding metrics. 
     
     clf_species = classifyTree(metricTrain_nonzero, speciesTrain_nonzero) #Fit a function to distinguish between species. 
-    
     
     #return clf, speciesTrain, newMetrics, scaler, tileSize, overlap, kbest
     species = classifyMap_2stage(clf_species, clf_flower, speciesTrain, newMetrics, scaler, imageName, tileSize, overlap, kbest)
@@ -193,5 +202,5 @@ def parameterSearch():
 
 # Allows us to simply run SpeciesTest without needing to load it in first.
 #if __name__ == '__main__':
-        #SpeciesTest(5) #currently running with training mode five. 
+#        species = SpeciesTest(6) #currently running with training mode five. 
 

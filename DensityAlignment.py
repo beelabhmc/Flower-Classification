@@ -1,6 +1,9 @@
 from PIL import Image
 import math
 from Constants import *
+import cv2
+import diagonal_crop
+
 
 #This file is used to create a training set. You can divide a large transect image into square 
 #meter portions. This set of images is then saved and can be read in. 
@@ -14,12 +17,13 @@ def divideTransect(Start, End, imageName):
     dim1 = Start[0] - End[0] #width
     dim2 = Start[1] - End[1] #height
     
-    if dim1>dim2: 
-        print 'Vertical'
-        return transectVert(Start, End, image)
-    else: 
-        print 'Horizontal'
-        imList = transectHoriz(Start, End, image)
+    imList = transectTotal(Start, End, image)
+    #if dim1>dim2: 
+    #    print 'Vertical'
+    #    return transectVert(Start, End, image)
+    #else: 
+    #    print 'Horizontal'
+    #    imList = transectHoriz(Start, End, image)
     return imList
     
 def transectHoriz(Start, End, image): 
@@ -48,7 +52,8 @@ def transectHoriz(Start, End, image):
         imageList += [subIm] 
     
     return imageList
-def transectTotal(Start, End, image): 
+    
+def transectTotal(Start, End, img): 
     length = int(math.sqrt(abs(Start[0] - End[0])**2 + abs(Start[1] - End[1])**2)) #Calculate the total length in pixels of the transect. 
     pix_per_meter = length/50 #How many pixels are in one meter, given the transect is 50 meters long. 
     horiz_length = Start[0] - End[0]
@@ -56,38 +61,45 @@ def transectTotal(Start, End, image):
     vert_length = Start[1] - End[1] 
     v_pix_per_meter = vert_length/50  #pix per meter vertically. 
     
-    angle = math.atan(vert_length/horiz_length) #Compute the angle at which the transect travels 
-    img = Image.open(image) #open the image you are working with 
-    img2 = img.rotate(-angle) #Rotate the image so that the transect is now vertical. 
+    angle = math.atan(vert_length/horiz_length) #Compute the angle at which the transect travels in radians 
+    alpha = math.pi/2 - angle
+   # img = Image.open(image) #open the image you are working with 
+    #img2 = img.rotate(-angle,expand=True) #Rotate the image so that the transect is now vertical. 
     
-    #Now that the image has been rotate, calculate the new starting and ending points. 
-    oldStart_x = Start[0] #The original coordinates
-    oldStart_y = Start[1]
-    newStart_x = int(oldStart_y*math.sin(angle) + oldStart_x*math.cos(angle)) #The new starting coordinates in the rotated image. 
-    newStart_y = int(oldStart_y*math.cos(angle) - oldStart_x*math.sin(angle))
-    
-    oldEnd_x = End[0] #The original ending coordinates
-    oldEnd_y = End[1] 
-    newEnd_x = int(oldEnd_y*math.sin(angle) + oldEnd_x*math.cos(angle)) #The new ending coordinates in the rotated image. 
-    newEnd_y = int(oldEnd_y*math.cos(angle) - oldEnd_x*math.sin(angle))
+    #Now that the image has been rotate, calculate the new starting and ending points.
+    #xmid = img.size[0]/2
+    #ymid = img.size[1]/2 
+    #oldStart_x = Start[0] #The original coordinates
+    #oldStart_y = Start[1]
+    #newStart_x = int(-(oldStart_y-ymid)*math.sin(angle) + (oldStart_x-xmid)*math.cos(angle)) + xmid #The new starting coordinates in the rotated image. 
+    #newStart_y = int((oldStart_y-ymid)*math.cos(angle) + (oldStart_x+xmid)*math.sin(angle)) + ymid
+    #
+    #oldEnd_x = End[0] #The original ending coordinates
+    #oldEnd_y = End[1]     
+    #newEnd_x = int(oldEnd_y*math.sin(angle) + oldEnd_x*math.cos(angle)) + xmid #The new ending coordinates in the rotated image. 
+    #newEnd_y = int(oldEnd_y*math.cos(angle) - oldEnd_x*math.sin(angle)) + ymid
     
     imageList = []  
-    rotated_meter_size = int((newEnd_x - newStart_x)/50) #The new image has a horizontal transect in it starting and ending at these coordinates, 50 m in length. 
+    height = pix_per_meter
+    width = 2*pix_per_meter
+    #rotated_meter_size = int((newEnd_x - newStart_x)/50) #The new image has a horizontal transect in it starting and ending at these coordinates, 50 m in length. 
     for i in range(50): #Go along the entire transect every meter. The transect should now be horizontal. 
-        centerpix = newStart_x + i*rotated_meter_size #Find where you are on the transect now, at meter i 
-        leftBound = centerpix #Determine the bounding edges of the box. The left edge starts at the meter you are on
-        rightBound = centerpix + rotated_meter_size #The right edge is one meter away from the left edge 
-        
-        top = newStart_y - rotated_meter_size #The top is one meter above the y coordinate of the transect
-        bottom = newStart_y + rotated_meter_size #The bottom is one meter below the y coordinate of the transect. 
-        box = (leftBound,top, rightBound, bottom)
-        
-        subIm = img2.crop(box) #crop out the current box 
+      #  centerpix = newStart_x + i*rotated_meter_size #Find where you are on the transect now, at meter i 
+      #  leftBound = centerpix #Determine the bounding edges of the box. The left edge starts at the meter you are on
+      #  rightBound = centerpix + rotated_meter_size #The right edge is one meter away from the left edge 
+      #  
+      #  top = newStart_y - rotated_meter_size #The top is one meter above the y coordinate of the transect
+      #  bottom = newStart_y + rotated_meter_size #The bottom is one meter below the y coordinate of the transect. 
+      #  box = (leftBound,top, rightBound, bottom) #(27135, 27416, -3560, -4122)
+      # # print(rightBound, leftBound, top, bottom) # (21860, 35332)
+      ##  print(img2.size)
+      #  subIm = img2.crop(box) #crop out the current box 
+    
+        base_pix = (Start[0] + (i+1)*h_pix_per_meter - pix_per_meter*math.cos(alpha), Start[1] + (i+1)*v_pix_per_meter + pix_per_meter*math.sin(alpha))
+        subIm = diagonal_crop.crop(img, base_pix, angle, height, width)
         imageList += [subIm] #Add it to the list of images in this transect. 
     return imageList    
        
-          
-                
 def transectVert(Start, End, image): 
     """Transect runs left and right in the image.The left end is start.""" 
     length = int(math.sqrt(abs(Start[0] - End[0])**2 + abs(Start[1] - End[1])**2)) 
@@ -129,6 +141,7 @@ def saveTransect(imageList, start, nameBase):
         fileName = IMAGE_PATH + nameBase + str(currentNum) + '.jpg'
         quadrat.save(fileName)
         currentNum += 1 
+            
             
 def main():  
     """Helper function to test the transect stitches and make sure they 

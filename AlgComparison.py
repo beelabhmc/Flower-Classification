@@ -5,16 +5,21 @@ from sklearn.cross_validation import train_test_split
 from sklearn.metrics import confusion_matrix
 import Plot_Conf_Matrix as pcm
 
-#f = open('TotalMetricTraining.txt', 'r') 
-f = open('metricTrainFull.txt', 'r')
-data = f.read() 
-metricTrain = eval(data) 
 
-#g = open('TotalSpeciesTraining.txt', 'r') 
-g = open('speciesTrainFull.txt', 'r')
-data = g.read() 
-speciesTrain = eval(data) 
-print(sum(speciesTrain))
+metricTrain = np.load('metricTrainFull.npy')
+speciesTrain = np.load('speciesTrainFull.npy')
+
+#
+##f = open('TotalMetricTraining.txt', 'r') 
+#f = open('metricTrainFull.txt', 'r')
+#data = f.read() 
+#metricTrain = eval(data) 
+#
+##g = open('TotalSpeciesTraining.txt', 'r') 
+#g = open('speciesTrainFull.txt', 'r')
+#data = g.read() 
+#speciesTrain = eval(data) 
+#print(sum(speciesTrain))
 
 #split the data set. 
 metric_train, metric_test, species_train, species_test = train_test_split(metricTrain, speciesTrain, test_size=0.5, random_state=0)

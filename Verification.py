@@ -253,19 +253,22 @@ def combineMasks(maskList, maskPath):
     combinedMask.save(fp) #Save the combined mask image for future use. 
     return combinedMask #Also return the combined mask image. 
 
-def convertMask(maskName, maskPath): 
+def convertMask(maskNameList, maskPath, maskSpeciesList): 
     """Convert from a mask image to a list of species""" 
-    maskIm = Image.open(IMAGE_PATH + maskPath + maskName)
+    maskIm = Image.open(IMAGE_PATH + maskPath + maskNameList[0]) #Open a new image 
     [width, height] = maskIm.size
-    speciesList = np.zeros((width, height))
-    for i in range(width): 
-        for j in range(height): 
-            currentPix = maskIm.getpixel((i,j)) 
-            if currentPix == (0,0,0): #If the current pixel is black 
-                speciesList[i,j] = 0 #The current location is ground 
-            else: 
-                speciesList[i,j] = 1 #The current location is penstemon 
-    return speciesList
+    speciesList = np.zeros((width, height))-1 #Make an array of -1. -1 will indicate an unmarked pixel. 
+    for k in range(len(maskNameList)): 
+        maskIm = Image.open(IMAGE_PATH + maskPath + maskNameList[k]) #Open a new image 
+        [width, height] = maskIm.size
+        for i in range(width): #For every pixel in the mask 
+            for j in range(height): 
+                currentPix = maskIm.getpixel((i,j)) 
+                if currentPix != (0,0,0,0): #If the current pixel is not black (could be any other color)
+                    speciesList[i,j] = maskSpeciesList[k] #The current location is the species of the mask
+        print(k)
+        print(3 in speciesList)
+    return speciesList #Return a list of species for each pixel in the image 
     
 def compareToMask(species, mask): 
     """Comapre the results of the machine learning algorithm to a hand labelled mask.""" 
@@ -291,7 +294,9 @@ def compareToMask(species, mask):
         for j in range(height): 
             algSpecies = species[i,j] #determine the species output by the algorithm 
             maskSpecies = mask[i,j] #determine the species labeled in the mask 
-            if algSpecies == 0: #If the algorithm returned ground 
+            if maskSpecies == -1: #If the location is unmarked
+                outputIm.putpixel((i,j), (112,242,255)) #Make the pixel blue for unmarked
+            elif algSpecies == 0: #If the algorithm returned ground 
                 if maskSpecies == 0: #Both agree on ground 
                     outputIm.putpixel((i,j), (0,0,0)) #Set the color to black 
                     ground_ground += 1 #Add to the counter 

@@ -62,7 +62,7 @@ def numericalSpecies(species):
             newSpecies[i] = 1 
         elif currentSpecies == "Pseudognaphalium californicus": 
             newSpecies[i] = 2
-        elif currentSpecies == "Penstemon spectabilis": 
+        elif currentSpecies == "Penstemon spectabilis" or currentSpecies == 'penstemon spectabilis': 
             newSpecies[i] = 3
         elif currentSpecies == "Eriogonum fasciculatum": 
             newSpecies[i] = 4

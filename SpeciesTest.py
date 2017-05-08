@@ -101,7 +101,7 @@ def SpeciesTest(trainingMode):
         speciesTrain = eval(data) 
         
         flowerTrain = [1 if i else 0 for i in speciesTrain]
-    if trainingMode == 5: #Training based on segmented research area images. 
+    if trainingMode == 5: #Training based on segmented research area images and non0flower transect images  
         transectIms, transectSpecies = createBSSTraining() #Get a list of images and species for the transects. 
         transectSpecies = numpy.asarray(transectSpecies)
         transectIms = numpy.asarray(transectIms)
@@ -119,7 +119,7 @@ def SpeciesTest(trainingMode):
         metricTrainTransect, speciesTrainTransect = tiledTraining(nonFlowerIms, nonFlowerSpecies, n, overlap) #get training metrics for transects, non-flower only. 
         
         #Now that you have all of the image, randomly choose several to use so that teh data set remains balanced. 
-        indices = np.random.choice(len(metricTrainTransect), 50) #Randomly choose 50 sample images of non-flowers 
+        indices = np.random.choice(len(metricTrainTransect), 200) #Randomly choose 50 sample images of non-flowers 
         metricTrainTransect = np.asarray(metricTrainTransect) 
         speciesTrainTransect = np.asarray(speciesTrainTransect)
         metricTrainTransect = metricTrainTransect[indices] 
@@ -155,13 +155,16 @@ def SpeciesTest(trainingMode):
         f.close()
         
     if trainingMode == 6: 
-        f = open('metricTrainFull.txt', 'r') 
-        data = f.read() 
-        metricTrain = eval(data) 
+        #f = open('metricTrainFull.txt', 'r') 
+        #data = f.read() 
+        #metricTrain = eval(data) 
+        #
+        #g = open('speciesTrainFull.txt', 'r') 
+        #data = g.read() 
+        #speciesTrain = eval(data) 
         
-        g = open('speciesTrainFull.txt', 'r') 
-        data = g.read() 
-        speciesTrain = eval(data) 
+        metricTrain = np.load('metricTrainFull.npy') 
+        speciesTrain = np.load('speciesTrainFull.npy')
         
         h = open('FlowerTrainFull.txt', 'r') 
         data = h.read() 
@@ -203,4 +206,3 @@ def parameterSearch():
 # Allows us to simply run SpeciesTest without needing to load it in first.
 #if __name__ == '__main__':
 #        species = SpeciesTest(6) #currently running with training mode five. 
-

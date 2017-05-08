@@ -266,17 +266,16 @@ def convertMask(maskNameList, maskPath, maskSpeciesList):
                 currentPix = maskIm.getpixel((i,j)) 
                 if currentPix != (0,0,0,0): #If the current pixel is not black (could be any other color)
                     speciesList[i,j] = maskSpeciesList[k] #The current location is the species of the mask
-        print(k)
-        print(3 in speciesList)
+                    #Assume there are no overlapping masks 
     return speciesList #Return a list of species for each pixel in the image 
     
 def compareToMask(species, mask): 
     """Comapre the results of the machine learning algorithm to a hand labelled mask.""" 
-    
     #First we need to load in the mask as a Python Image. 
     maskName = 'Research_May15_small_mask_0.png'
     maskIm = Image.open(IMAGE_PATH + 'research_may15/' + maskName) #maskIm is the same size as the original image 
-    outputIm = IC.duplicate(maskIm)
+    size = maskIm.size
+    outputIm = Image.new("RGB", size, (241, 244, 66))
     
     #Finally determine a comparison scheme and way to plot for the four kinds of results: 
     #Correct Identifications: 
@@ -295,21 +294,23 @@ def compareToMask(species, mask):
             algSpecies = species[i,j] #determine the species output by the algorithm 
             maskSpecies = mask[i,j] #determine the species labeled in the mask 
             if maskSpecies == -1: #If the location is unmarked
-                outputIm.putpixel((i,j), (112,242,255)) #Make the pixel blue for unmarked
+                outputIm.putpixel((i,j), (244,149,66)) #Make the pixel orange for unmarked
             elif algSpecies == 0: #If the algorithm returned ground 
                 if maskSpecies == 0: #Both agree on ground 
                     outputIm.putpixel((i,j), (0,0,0)) #Set the color to black 
                     ground_ground += 1 #Add to the counter 
-                elif maskSpecies ==1: #Alg ground, mask is penstemon 
+                elif maskSpecies ==3: #Alg ground, mask is penstemon 
                     outputIm.putpixel((i,j), (228, 15,15)) #Set the color to green (32, 165, 76)
                     ground_penst += 1 
-            elif algSpecies ==1: 
-                if maskSpecies ==1: #Both agree on penstemon 
+            elif algSpecies ==3: 
+                if maskSpecies ==3: #Both agree on penstemon 
                     outputIm.putpixel((i,j), (255,255,255)) #Set the color to white
                     penst_penst += 1 
                 elif maskSpecies == 0: #alg is penstemon, mask is ground 
                     outputIm.putpixel((i,j), (132, 27, 186)) #Set the color to purple 
-                    penst_ground += 1     
+                    penst_ground += 1  
+            else: 
+                outputIm.putpixel((i,j),(244,149,66)) #If this isn't a species of interest, make it orange as well.   
     outputIm.show()
     return [outputIm, ground_ground, ground_penst, penst_penst, penst_ground]
     

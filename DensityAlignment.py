@@ -5,7 +5,7 @@ import cv2
 import diagonal_crop
 
 
-#This file is used to create a training set. You can divide a large transect image into square 
+#This file is used to create a transect image training set. You can divide a large transect image into square 
 #meter portions. This set of images is then saved and can be read in. 
 def divideTransect(Start, End, imageName): 
     """Takes in the pixel coordinates of a start and end for a transect. Divides into images that

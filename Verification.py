@@ -1,4 +1,4 @@
-#Import the thing syou need here. 
+#Import the things you need here.
 from MachineLearning import * 
 from FullProgram import * 
 from ImageProcess import * 
@@ -12,6 +12,7 @@ from sklearn.metrics import confusion_matrix
 import sklearn.utils.multiclass as mc
 import numpy as np 
 from PIL import ImageChops as IC
+
 def GetTrainingMetrics(imageName, trainingType, densityList): 
     """Calculates or reads in pre calculated metrics on a training set to be used later."""
     

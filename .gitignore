@@ -4,3 +4,4 @@
 *.tiff
 .DS_Store
 *.pyc
+/images/stitchTest/*

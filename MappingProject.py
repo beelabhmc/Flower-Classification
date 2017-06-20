@@ -35,8 +35,8 @@ class MappingProject:
         
 mp = MappingProject()
 
-mp.readProjectKmlFiles("footprints.kml", "stitched footprint.kml", 2726, 2695)
-print mp.fromOriginals(1000, 2000, ['DJI_0163.JPG', 'DJI_0169.JPG', 'DJI_0162.JPG'])
+mp.readProjectKmlFiles("stitchTest/footprints.kml", "stitchTest/stitched footprint.kml", 2726, 2695)
+print mp.fromOriginals(1000, 2000)
 
 #print mp.stitchToOriginal("DJI_0162.JPG", 1363, 1342)
 #print mp.stitchToOriginal("DJI_0163.JPG", 1363, 1342)

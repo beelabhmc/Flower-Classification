@@ -11,6 +11,7 @@ from sklearn.feature_selection import SelectKBest
 from sklearn import grid_search, datasets
 from Constants import *
 import numpy as np
+from nameParse import *
 
 def SpeciesTest(trainingMode):
     #input a training set - list of metrics and the corresponding species. The 2 lists must be the same length. 
@@ -102,24 +103,10 @@ def SpeciesTest(trainingMode):
         
         flowerTrain = [1 if i else 0 for i in speciesTrain]
     if trainingMode == 5: #Training based on segmented research area images and non0flower transect images  
-        transectIms, transectSpecies = createBSSTraining() #Get a list of images and species for the transects. 
-        transectSpecies = numpy.asarray(transectSpecies)
-        #transectIms = numpy.asarray(transectIms)
-        nonFlowerLocations = numpy.nonzero(transectSpecies)   
-        nonFlowerSpecies = numpy.delete(transectSpecies, nonFlowerLocations, None)
-        #nonFlowerIms = numpy.delete(transectIms, nonFlowerLocations, None)
-        
-        #nonFlowerIms = np.asarray(nonFlowerIms) #Convert to a numpy array to allow for index selection
+        nonFlowerSpecies,nonFlowerIms,speciesListResearch,imListResearch=getSpeciesandImg()   
         nonFlowerSpecies = np.asarray(nonFlowerSpecies) 
-        
-        #indices = np.random.choice(len(nonFlowerSpecies), 5) #Randomly choose 300 samples of non-flowers 
-        #usednonFlowerIms = nonFlowerIms[indices] #Use only the randomly chosen images. 
-        #usednonFlowerSpecies = nonFlowerSpecies[indices]
-        hand=open('newNonFlower.txt', 'r')
-        nonFlowerIms = hand.readlines()
-        nonFlowerIms = [x.strip() for x in nonFlowerIms]                       
         metricTrainTransect, speciesTrainTransect = tiledTraining(nonFlowerIms, nonFlowerSpecies, n, overlap) #get training metrics for transects, non-flower only. 
-        
+
         #Now that you have all of the image, randomly choose several to use so that teh data set remains balanced. 
         indices = np.random.choice(len(metricTrainTransect), 200) #Randomly choose 50 sample images of non-flowers 
         metricTrainTransect = np.asarray(metricTrainTransect) 
@@ -128,11 +115,8 @@ def SpeciesTest(trainingMode):
         speciesTrainTransect = speciesTrainTransect[indices]
         
         #Input the segmented research area images. 
-        imListResearch, coordLeft, coordRight, speciesListResearch, numFlowers = createAllResearchTraining()  #Get all of the training images and species information 
-        speciesListResearch_num = numericalSpecies(speciesListResearch) #Convert to a numerical species (i.e. 1,2,3 instead of names)
-        hand=open('newFlower.txt', 'r')
-        imListResearch = hand.readlines()
-        imListResearch = [x.strip() for x in imListResearch]   
+        #imListResearch, coordLeft, coordRight, speciesListResearch, numFlowers = createAllResearchTraining()  #Get all of the training images and species information 
+        speciesListResearch_num = numericalSpecies(speciesListResearch) #Convert to a numerical species (i.e. 1,2,3 instead of names)   
         metricTrainResearch, speciesTrainResearch = tiledTraining(imListResearch, speciesListResearch_num, n, overlap) #get the metrics for segmented research images. 
         #Combine the two kinds of training data to create one comprehensive list. 
         metricTrain = np.concatenate((metricTrainTransect, metricTrainResearch), axis = 0) #add the research data at the end of the training list for metrics. 

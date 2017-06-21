@@ -15,7 +15,6 @@ def getSpeciesandImg():
     noflImgs=[]
     speciesList=[]
     speciesImgs=[]
-    print(imgs)
     for i in imgs:
         for key in list(speciesDict.keys()):
             if key in i:
@@ -25,6 +24,5 @@ def getSpeciesandImg():
                 else:
                     speciesList.append(speciesDict[key])
                     speciesImgs.append(i)
-        print(i)
     return noflList, noflImgs, speciesList, speciesImgs
 

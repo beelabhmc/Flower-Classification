@@ -2,31 +2,78 @@
 import numpy as np
 from Constants import * 
 from MappingProject import *
-from PIL import Image 
+import cv2
+import os
+from scipy import spatial as sp
 
-def convertMask(filePath, saveToFile=False):
-    image = Image.open(filePath)
-    gray = image.convert('L')
-    bw = gray.point(lambda x: 0 if x==0 else 255, '1')
-    bw.save(filePath)
-    return bw
+
+class Mask:
+    image = None
+    path = ""
     
-#def 
+    def __init__(self, image, path):
+        self.image = image
+        self.path = path
     
-def trainingForProject(originalFoorprint, stitchFootprint, stitchWidth, stitchHeight):
-    mp = MappingProject()
-    mp.readProjectKmlFiles(originalFoorprint, stitchFootprint, stitchWidth, stitchHeight)
+    def convertToBW(self, saveToFile=False):
+        bw = cv2.threshold(self.image, 1, 255, cv2.THRESH_BINARY)[1]
+        if saveToFile:
+            newDir = os.path.join(os.path.dirname(self.path), "masks_bw")
+            imgName = os.path.basename(self.path)
+            if not os.path.exists(newDir):
+                os.makedirs(newDir)
+            cv2.imwrite(os.path.join(newDir, imgName), bw)
+        return bw
+
+class CreateMaskedTraining:
+    masks = {}
+    mp = None
     
+    def readMPFromFile(self, originalKml, stitchKml, stitchWidth, stitchHeight, scheme=False):
+        self.mp = MappingProject()
+        self.mp.readProjectKmlFiles(originalKml, stitchKml, stitchWidth, stitchHeight, scheme)
+        
+    def importMP(self, mappingProject):
+        self.mp = mappingProject
+        
+    def readMasksFromXml(self, folderPath, save=False):
+        self.masks = {}
+        
+        xmlPath = ""
+        for filePath in os.listdir(folderPath):
+            if filePath.endswith(".xml"):
+                xmlPath = os.path.join(folderPath, filePath)
+                
+        tree = ET.parse(xmlPath)
+        root = tree.getroot()
+        obj = root.findall('object') #Find all of the masks    
+        
+        for mask in obj: #For each of these masks... 
+            seg = mask.find('segm')
+            if seg is None: 
+                continue
+                
+            maskPath = os.path.join(folderPath, seg.find('mask').text)
+            species = mask.find('name').text
+            
+            maskImg = cv2.imread(os.path.join(maskPath), cv2.IMREAD_GRAYSCALE)
+            if maskImg is not None:
+                newMask = Mask(maskImg, maskPath)
+                newMask.convertToBW(saveToFile=save)
+                self.masks[newMask] = species
+
     
-    
-    # read all masks
-    # transform to bw masks
-    
-    # for every mask, 
-        # find the cover
-        # get training images
-    
-    
-    # return the training images
-    
-convertMask("images/research_may15/Research_May15_small_mask_0.png", True)
+    def mainFunction():
+        # read all masks - done
+        # transform to bw masks - done
+        
+        # for every mask, 
+            # find the cover
+            # get training images
+        
+        
+        # return the training images
+        return None
+
+mt = CreateMaskedTraining()
+mt.readMasksFromXml("images/research_may15")

@@ -5,3 +5,5 @@
 .DS_Store
 *.pyc
 /images/stitchTest/*
+/images/research_may15/masks_bw/*
+/images/research_may20/masks_bw/*

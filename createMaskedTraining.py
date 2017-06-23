@@ -4,7 +4,8 @@ from Constants import *
 from MappingProject import *
 import cv2
 import os
-from scipy import spatial as sp
+from scipy.spatial import ConvexHull
+import matplotlib.pyplot as plt
 
 
 class Mask:
@@ -36,7 +37,7 @@ class CreateMaskedTraining:
     def importMP(self, mappingProject):
         self.mp = mappingProject
         
-    def readMasksFromXml(self, folderPath, save=False):
+    def readMasks(self, folderPath, save=False):
         self.masks = {}
         
         xmlPath = ""
@@ -62,18 +63,46 @@ class CreateMaskedTraining:
                 newMask.convertToBW(saveToFile=save)
                 self.masks[newMask] = species
 
+    #def 
     
-    def mainFunction():
+    def mainFunction(self):
         # read all masks - done
         # transform to bw masks - done
         
-        # for every mask, 
-            # find the cover
-            # get training images
+        # find the cover
+        # get training images
         
+        # for every mask, 
+        mask = self.masks.popitem()[0]
+        for mask in self.masks.iterkeys():
+        # turn the mask into convex hull
+            maskImg = mask.image
+            maskPath = mask.path
+            maskPoints = np.nonzero(maskImg)
+            if len(maskPoints[0]) == 0:
+                print maskPath + " is empty, skipping...."
+                continue
+                
+            maskPoints = np.column_stack(maskPoints)
+            hull = ConvexHull(maskPoints)
+            hullBoundary = np.column_stack((maskPoints[hull.vertices, 1], maskPoints[hull.vertices, 0]))
+            #plt.plot(maskPoints[:,1], maskPoints[:,0], 'o')
+            #plt.plot(maskPoints[hull.vertices,1], maskPoints[hull.vertices,0], 'r--', lw=2)
+            #plt.show()
+        
+            # find the set of originals that intersect with the convex hull mask
+            # while the mask is none-empty
+                # find the original image that has the largest intersection area
+                # with the current mask
+                # (maybe) split into smaller images
+                # update mask
+                
+            break
+
         
         # return the training images
         return None
 
 mt = CreateMaskedTraining()
-mt.readMasksFromXml("images/research_may15")
+mt.readMasks("images/research_may15")
+mt.mainFunction()

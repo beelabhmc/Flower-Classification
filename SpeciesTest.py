@@ -103,7 +103,8 @@ def SpeciesTest(trainingMode):
         
         flowerTrain = [1 if i else 0 for i in speciesTrain]
     if trainingMode == 5: #Training based on segmented research area images and non0flower transect images  
-        nonFlowerSpecies,nonFlowerIms,speciesListResearch,imListResearch=getSpeciesandImg()   
+        imListResearch, coordLeft, coordRight, speciesListResearch, numFlowers = createAllResearchTraining()
+        nonFlowerSpecies,nonFlowerIms,speciesListResearch_n,imListResearch=getSpeciesandImg()   
         nonFlowerSpecies = np.asarray(nonFlowerSpecies) 
         metricTrainTransect, speciesTrainTransect = tiledTraining(nonFlowerIms, nonFlowerSpecies, n, overlap) #get training metrics for transects, non-flower only. 
 
@@ -181,7 +182,6 @@ def SpeciesTest(trainingMode):
     species = classifyMap_2stage(clf_species, clf_flower, speciesTrain, newMetrics, scaler, imageName, tileSize, overlap, kbest)
     #classifyMap(clf_species, speciesTrain, newMetrics, scaler, imageName, tileSize, overlap, kbest)   
     plt.show()
-
     return species
     
 def parameterSearch(): 

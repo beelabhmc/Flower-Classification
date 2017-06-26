@@ -1,11 +1,10 @@
-speciesDict={'NOFL': 'No flower',
+speciesDict={'NOFL': 0,
             'SAAP':'Salvia apiana',
-            'MAVU': 'Marrubiumvulare',
-            'ERTR':'Eriodictyon trichcalyx',
-            'PESP': 'Pestemon spectabilis',
+            'MAVU': 'Marrubium vulgare',
+            'ERTR':'Eriodictyon trichocalyx',
+            'PESP': 'Penstemon spectabilis',
             'ACGL': 'Acmispon glaber',
             'CRIN':'Cryptantha intermedia'}
-
 
 def getSpeciesandImg():
     hand=open('selectedTrainingImgs.txt', 'r')

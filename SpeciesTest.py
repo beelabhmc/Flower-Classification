@@ -103,8 +103,9 @@ def SpeciesTest(trainingMode):
         
         flowerTrain = [1 if i else 0 for i in speciesTrain]
     if trainingMode == 5: #Training based on segmented research area images and non0flower transect images  
-        imListResearch, coordLeft, coordRight, speciesListResearch, numFlowers = createAllResearchTraining()
-        nonFlowerSpecies,nonFlowerIms,speciesListResearch_n,imListResearch=getSpeciesandImg()   
+        #imListResearch, coordLeft, coordRight, speciesListResearch, numFlowers = createAllResearchTraining()
+        nonFlowerImgs,nonFlowerImgs,FlowerCode,FlowerImgs=createNewResearchTraining()
+        nonFlowerImgs=numericalSpecies(nonFlowerImgs) 
         nonFlowerSpecies = np.asarray(nonFlowerSpecies) 
         metricTrainTransect, speciesTrainTransect = tiledTraining(nonFlowerIms, nonFlowerSpecies, n, overlap) #get training metrics for transects, non-flower only. 
 
@@ -117,8 +118,8 @@ def SpeciesTest(trainingMode):
         
         #Input the segmented research area images. 
         #imListResearch, coordLeft, coordRight, speciesListResearch, numFlowers = createAllResearchTraining()  #Get all of the training images and species information 
-        speciesListResearch_num = numericalSpecies(speciesListResearch) #Convert to a numerical species (i.e. 1,2,3 instead of names)   
-        metricTrainResearch, speciesTrainResearch = tiledTraining(imListResearch, speciesListResearch_num, n, overlap) #get the metrics for segmented research images. 
+        speciesListResearch_num = numericalSpecies(FlowerCode) #Convert to a numerical species (i.e. 1,2,3 instead of names)   
+        metricTrainResearch, speciesTrainResearch = tiledTraining(FlowerImgs, speciesListResearch_num, n, overlap) #get the metrics for segmented research images. 
         #Combine the two kinds of training data to create one comprehensive list. 
         metricTrain = np.concatenate((metricTrainTransect, metricTrainResearch), axis = 0) #add the research data at the end of the training list for metrics. 
         speciesTrain = np.concatenate((speciesTrainTransect, speciesTrainResearch), axis = 0)

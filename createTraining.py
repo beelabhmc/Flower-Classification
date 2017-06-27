@@ -48,6 +48,28 @@ def tiledTraining(imList, species, overlap, n):
     return metricList, speciesList #Return the overal metric and species lists. These now include subdivided portions of each image. 
 
     
+
+def createNewResearchTraining():
+    #Initialize empty lists to store all of the relevant information.  
+    hand=open('selectedTrainingImgs.txt', 'r')
+    imgs = hand.readlines()
+    imgs = [x.strip() for x in imgs]
+    spCode=list(map(lambda x:x[24:28], imgs))
+    FlowerCode=[]
+    FlowerImgs=[]
+    nonFlowerCode=[]
+    nonFlowerImgs=[]
+    for i in range(len(spCode)):
+        if spCode[i]=='NOFL':
+            nonFlowerCode.append(spCode[i])
+            nonFlowerImgs.append(imgs[i])
+        else:
+            FlowerCode.append(spCode[i])
+            FlowerImgs.append(imgs[i])
+    return nonFlowerImgs,nonFlowerImgs,FlowerCode,FlowerImgs
+
+
+
 def numericalSpecies(species): 
     """Change the species from scientific names into corresponding numbers to be used in classification.
     This is necessary because not all algorithms support non-numerical class labels. In order to 
@@ -58,43 +80,43 @@ def numericalSpecies(species):
     newSpecies = range(len(species))
     for i in range(len(species)): #for each species listed 
         currentSpecies = species[i]
-        if currentSpecies == "Brassica nigra": 
+        if currentSpecies == "BRNI": 
             newSpecies[i] = 1 
-        elif currentSpecies == "Pseudognaphalium californicus": 
+        elif currentSpecies == "PSCA": 
             newSpecies[i] = 2
-        elif currentSpecies == "Penstemon spectabilis" or currentSpecies == 'penstemon spectabilis': 
+        elif currentSpecies == "PESP": 
             newSpecies[i] = 3
-        elif currentSpecies == "Eriogonum fasciculatum": 
+        elif currentSpecies == "ERFA":
             newSpecies[i] = 4
-        elif currentSpecies == "Malosma laurina": 
+        elif currentSpecies == "MALA": 
             newSpecies[i] = 5
-        elif currentSpecies == "Acmispon glaber": 
+        elif currentSpecies == "ACGL": 
             newSpecies[i] = 6
-        elif currentSpecies == "Eriogonum gracile": 
+        elif currentSpecies == "ERGR": 
             newSpecies[i] = 7 
-        elif currentSpecies == "Croton setigerus": 
+        elif currentSpecies == "CRSE": 
             newSpecies[i] = 8 
-        elif currentSpecies == "Hirschfeldia incana": 
+        elif currentSpecies == "HIIN": 
             newSpecies[i] = 9
-        elif currentSpecies == "Centaurea melitensis": 
+        elif currentSpecies == "CEME": 
             newSpecies[i] = 10
-        elif currentSpecies == "Mirabilis laevis": 
+        elif currentSpecies == "MILA": 
             newSpecies[i] = 11
-        elif currentSpecies == "Erodium cicutarium": 
+        elif currentSpecies == "ERCI": 
             newSpecies[i] = 12
-        elif currentSpecies == "Marrubium vulgare": 
+        elif currentSpecies == "MAVU": 
             newSpecies[i] = 13
-        elif currentSpecies == "Eriodictyon trichocalyx": 
+        elif currentSpecies == "ERTR": 
             newSpecies[i] = 14
-        elif currentSpecies == "Phacelia distans": 
+        elif currentSpecies == "PHDI": 
             newSpecies[i] = 15
-        elif currentSpecies == "Camissoniopsis bistorta": 
+        elif currentSpecies == "CABI": 
             newSpecies[i] = 16
-        elif currentSpecies == "Cryptantha intermedia": 
+        elif currentSpecies == "CRIN": 
             newSpecies[i] = 17
-        elif currentSpecies == "Apiastrum angustifolium": 
+        elif currentSpecies == "APAN": 
             newSpecies[i] = 18   
-        elif currentSpecies == "Salvia apiana": 
+        elif currentSpecies == "SAAP": 
             newSpecies[i] = 19    
         else: 
             newSpecies[i] = 0 # species 0 for no flowers or some random unknown value. 

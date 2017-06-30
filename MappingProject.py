@@ -21,6 +21,14 @@ class MappingProject:
         x, y = self.stitch.stitchToGpsCoord(l, m)
         ll, mm = self.originals[originalImgName].gpsToOriginalCoord(x, y)
         return ll, mm
+    
+    def originalCornerInStitch(self, originalImgName, width=4000, height=3000):
+        corners = [[0, 0], [width, 0], [width, height], [0, height], [0, 0]]
+        output = []
+        for corner in corners:
+            projx, projy = self.originalToStitch(originalImgName, corner[0], corner[1])
+            output.append((projx, projy))
+        return output
         
     def fromOriginals(self, l, m, fromImages=None):
         x, y = self.stitch.stitchToGpsCoord(l, m)
@@ -33,9 +41,10 @@ class MappingProject:
                 originals += [k]
         return originals
         
-mp = MappingProject()
-
+#mp = MappingProject()
+#
 #mp.readProjectKmlFiles("stitchTest/footprints.kml", "stitchTest/stitched footprint.kml", 2726, 2695)
+#print mp.originalCornerInStitch("DJI_0162.JPG")
 #print mp.fromOriginals(1000, 2000)
 
 #print mp.stitchToOriginal("DJI_0162.JPG", 1363, 1342)

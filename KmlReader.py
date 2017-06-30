@@ -82,5 +82,5 @@ def stitchSchemeReader(kmlFilePath, imgWidth, imgHeight):
         
     return StitchImage(coord, imgWidth, imgHeight)
 
-#print originalReader('footprints.kml')
-#print stitchReader('stitched footprint.kml', 2726, 2695)
+#print originalReader('stitchTest/footprints.kml')
+#print stitchReader('stitchTest/stitched footprint.kml', 2726, 2695)

@@ -6,6 +6,8 @@ import cv2
 import os
 from scipy.spatial import ConvexHull
 import matplotlib.pyplot as plt
+import shapely
+from shapely.geometry import Polygon
 
 
 class Mask:
@@ -73,24 +75,36 @@ class CreateMaskedTraining:
         # get training images
         
         # for every mask, 
-        mask = self.masks.popitem()[0]
         for mask in self.masks.iterkeys():
-        # turn the mask into convex hull
+            # turn the mask into convex hull - done
             maskImg = mask.image
             maskPath = mask.path
             maskPoints = np.nonzero(maskImg)
             if len(maskPoints[0]) == 0:
-                print maskPath + " is empty, skipping...."
+                print maskPath + " is empty, skipping..."
                 continue
                 
             maskPoints = np.column_stack(maskPoints)
             hull = ConvexHull(maskPoints)
-            hullBoundary = np.column_stack((maskPoints[hull.vertices, 1], maskPoints[hull.vertices, 0]))
+            hullBoundary = zip(maskPoints[hull.vertices, 1], maskPoints[hull.vertices, 0])
+            hullBoundary.append(hullBoundary[0])
             #plt.plot(maskPoints[:,1], maskPoints[:,0], 'o')
             #plt.plot(maskPoints[hull.vertices,1], maskPoints[hull.vertices,0], 'r--', lw=2)
             #plt.show()
         
             # find the set of originals that intersect with the convex hull mask
+            overlappingOriginals = []
+            for original in self.mp.originals:
+                originalProj = self.mp.originalCornerInStitch(original)
+                originalPolygon = Polygon(originalProj)
+                maskPolygon = Polygon(hullBoundary)
+                intersection = originalPolygon.intersection(maskPolygon)
+                
+                if not intersection.is_empty:
+                    overlappingOriginals += original
+                break
+            
+            
             # while the mask is none-empty
                 # find the original image that has the largest intersection area
                 # with the current mask
@@ -104,5 +118,6 @@ class CreateMaskedTraining:
         return None
 
 mt = CreateMaskedTraining()
+mt.readMPFromFile("stitchTest/footprints.kml", "stitchTest/stitched footprint.kml", 2726, 2695)
 mt.readMasks("images/research_may15")
 mt.mainFunction()

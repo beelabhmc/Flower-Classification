@@ -101,8 +101,10 @@ class CreateMaskedTraining:
                 intersection = originalPolygon.intersection(maskPolygon)
                 
                 if not intersection.is_empty:
-                    overlappingOriginals += original
-                break
+                    overlappingOriginals.append(original)
+            
+            print maskPath
+            print overlappingOriginals
             
             
             # while the mask is none-empty

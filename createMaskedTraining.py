@@ -8,6 +8,7 @@ from scipy.spatial import ConvexHull
 import matplotlib.pyplot as plt
 import shapely
 from shapely.geometry import Polygon
+from createTraining import tiledTraining
 
 
 class Mask:
@@ -65,53 +66,53 @@ class CreateMaskedTraining:
                 newMask.convertToBW(saveToFile=save)
                 self.masks[newMask] = species
 
-    #def 
+    def tiledTraining(self, mask, overlap=0.2, n=50):
+        print mask.path
+        print tiledTraining([mask.path], [self.masks[mask]], overlap, n)
+        return
     
     def mainFunction(self):
-        # read all masks - done
-        # transform to bw masks - done
-        
         # find the cover
         # get training images
         
         # for every mask, 
         for mask in self.masks.iterkeys():
             # turn the mask into convex hull - done
-            maskImg = mask.image
-            maskPath = mask.path
-            maskPoints = np.nonzero(maskImg)
-            if len(maskPoints[0]) == 0:
-                print maskPath + " is empty, skipping..."
-                continue
-                
-            maskPoints = np.column_stack(maskPoints)
-            hull = ConvexHull(maskPoints)
-            hullBoundary = zip(maskPoints[hull.vertices, 1], maskPoints[hull.vertices, 0])
-            hullBoundary.append(hullBoundary[0])
-            #plt.plot(maskPoints[:,1], maskPoints[:,0], 'o')
-            #plt.plot(maskPoints[hull.vertices,1], maskPoints[hull.vertices,0], 'r--', lw=2)
-            #plt.show()
-        
-            # find the set of originals that intersect with the convex hull mask
-            overlappingOriginals = []
-            for original in self.mp.originals:
-                originalProj = self.mp.originalCornerInStitch(original)
-                originalPolygon = Polygon(originalProj)
-                maskPolygon = Polygon(hullBoundary)
-                intersection = originalPolygon.intersection(maskPolygon)
-                
-                if not intersection.is_empty:
-                    overlappingOriginals.append(original)
-            
-            print maskPath
-            print overlappingOriginals
-            
+        #    maskImg = mask.image
+        #    maskPath = mask.path
+        #    maskPoints = np.nonzero(maskImg)
+        #    if len(maskPoints[0]) == 0:
+        #        print maskPath + " is empty, skipping..."
+        #        continue
+        #        
+        #    maskPoints = np.column_stack(maskPoints)
+        #    hull = ConvexHull(maskPoints)
+        #    hullBoundary = zip(maskPoints[hull.vertices, 1], maskPoints[hull.vertices, 0])
+        #    hullBoundary.append(hullBoundary[0])
+        #
+        #    # find the set of originals that intersect with the convex hull mask
+        #    overlappingOriginals = []
+        #    for original in self.mp.originals:
+        #        originalProj = self.mp.originalCornerInStitch(original)
+        #        originalPolygon = Polygon(originalProj)
+        #        maskPolygon = Polygon(hullBoundary)
+        #        intersection = originalPolygon.intersection(maskPolygon)
+        #        
+        #        if not intersection.is_empty:
+        #            overlappingOriginals.append(original)
+        #    
+        #    print maskPath
+        #    print overlappingOriginals
+        #    
             
             # while the mask is none-empty
                 # find the original image that has the largest intersection area
                 # with the current mask
-                # (maybe) split into smaller images
+                # get the mask from the original image space
                 # update mask
+                
+            # make sliding windows for each fraction of mask
+            self.tiledTraining(mask)
                 
             break
 
@@ -123,3 +124,7 @@ mt = CreateMaskedTraining()
 mt.readMPFromFile("stitchTest/footprints.kml", "stitchTest/stitched footprint.kml", 2726, 2695)
 mt.readMasks("images/research_may15")
 mt.mainFunction()
+
+#plt.plot(maskPoints[:,1], maskPoints[:,0], 'o')
+#plt.plot(maskPoints[hull.vertices,1], maskPoints[hull.vertices,0], 'r--', lw=2)
+#plt.show()

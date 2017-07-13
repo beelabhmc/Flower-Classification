@@ -113,7 +113,8 @@ class CreateMaskedTraining:
                 
             # make sliding windows for each fraction of mask
             self.tiledTraining(mask)
-                
+            maskedImage = cv2.
+            
             break
 
         
@@ -121,7 +122,7 @@ class CreateMaskedTraining:
         return None
 
 mt = CreateMaskedTraining()
-mt.readMPFromFile("stitchTest/footprints.kml", "stitchTest/stitched footprint.kml", 2726, 2695)
+mt.readMPFromFile("stitchTest/footprints.kml", "stitchTest/extrapolationOrtho.kml", 8725, 6814)
 mt.readMasks("images/research_may15")
 mt.mainFunction()
 

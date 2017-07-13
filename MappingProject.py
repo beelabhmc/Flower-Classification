@@ -20,7 +20,10 @@ class MappingProject:
     def stitchToOriginal(self, originalImgName, l, m):
         x, y = self.stitch.stitchToGpsCoord(l, m)
         ll, mm = self.originals[originalImgName].gpsToOriginalCoord(x, y)
-        return ll, mm
+        if self.inRange(ll, mm):
+            return ll, mm
+        else:
+            return None
     
     def originalCornerInStitch(self, originalImgName, width=4000, height=3000):
         corners = [[0, 0], [width, 0], [width, height], [0, height], [0, 0]]
@@ -41,6 +44,12 @@ class MappingProject:
                 originals += [k]
         return originals
         
+    def inRange(self, x, y, width=4000, height=3000):
+        if x >= 0 and x <= width:
+            if y >= 0 and y <= height:
+                return True
+        return False
+        
 mp = MappingProject()
 
 # My own test stitches
@@ -50,14 +59,62 @@ mp = MappingProject()
 #print mp.originalToStitch("DJI_0162.JPG", 2000, 0)
 #print mp.stitchToOriginal("DJI_0162.JPG", 0, 0)
 
-# Try mapping the point of interest from stitched map to individual originals
+#print "Mapping the point of interest from stitched map to individual originals"
+#print "Original footprints & original stitch"
 #mp.readProjectKmlFiles("stitchTest/footprints.kml", "stitchTest/stitched footprint.kml", 2726, 2695)
 #print mp.stitchToOriginal("DJI_0162.JPG", 1363, 1342)
 #print mp.stitchToOriginal("DJI_0163.JPG", 1363, 1342)
 #print mp.stitchToOriginal("DJI_0169.JPG", 1363, 1342)
 #print mp.stitchToOriginal("DJI_0170.JPG", 1363, 1342)
+#
+#print "Corrected footprints & extended stitch"
+#mp.readProjectKmlFiles("stitchTest/footprints-agi.kml", "stitchTest/extrapolationOrtho.kml", 8725, 6814)
+#print mp.stitchToOriginal("DJI_0162.JPG", 4836, 4107)
+#print mp.stitchToOriginal("DJI_0163.JPG", 4836, 4107)
+#print mp.stitchToOriginal("DJI_0169.JPG", 4836, 4107)
+#print mp.stitchToOriginal("DJI_0170.JPG", 4836, 4107)
+#
+#print "Original footprints & extended stitch"
+#mp.readProjectKmlFiles("stitchTest/footprints.kml", "stitchTest/extrapolationOrtho.kml", 8725, 6814)
+#print mp.stitchToOriginal("DJI_0162.JPG", 4836, 4107)
+#print mp.stitchToOriginal("DJI_0163.JPG", 4836, 4107)
+#print mp.stitchToOriginal("DJI_0169.JPG", 4836, 4107)
+#print mp.stitchToOriginal("DJI_0170.JPG", 4836, 4107)
 
-#print mp.originalToStitch("DJI_0163.JPG", 1873, 2188)
+#print "Mapping the point of interest from individual originals to stitched map"
+#print "Original footprints & original stitch"
+#mp.readProjectKmlFiles("stitchTest/footprints.kml", "stitchTest/stitched footprint.kml", 2726, 2695)
+#print mp.originalToStitch("DJI_0162.JPG", 3114, 2815)
+#print mp.originalToStitch("DJI_0163.JPG", 2098, 2957)
+#print mp.originalToStitch("DJI_0169.JPG", 1615, 1565)
+#print mp.originalToStitch("DJI_0170.JPG", 2661, 1390)
+#
+#print "Corrected footprints & extended stitch"
+#mp.readProjectKmlFiles("stitchTest/footprints-agi.kml", "stitchTest/extrapolationOrtho.kml", 8725, 6814)
+#print mp.originalToStitch("DJI_0162.JPG", 3114, 2815)
+#print mp.originalToStitch("DJI_0163.JPG", 2098, 2957)
+#print mp.originalToStitch("DJI_0169.JPG", 1615, 1565)
+#print mp.originalToStitch("DJI_0170.JPG", 2661, 1390)
+#
+#print "Original footprints & extended stitch"
+#mp.readProjectKmlFiles("stitchTest/footprints.kml", "stitchTest/extrapolationOrtho.kml", 8725, 6814)
+#print mp.originalToStitch("DJI_0162.JPG", 3114, 2815)
+#print mp.originalToStitch("DJI_0163.JPG", 2098, 2957)
+#print mp.originalToStitch("DJI_0169.JPG", 1615, 1565)
+#print mp.originalToStitch("DJI_0170.JPG", 2661, 1390)
+
+print "Testing on larger testing images"
+#mp.readProjectKmlFiles("stitchTest2/footprints.kml", "stitchTest2/stitchExtended.kml", 37599, 20369)
+mp.readProjectKmlFiles("stitchTest2/footprints.kml", "stitchTest2/stitchOriginal.kml", 28909, 11771)
+for no in xrange(463, 629, 5):
+    imgName = "DJI_0" + str(no) + ".JPG"
+    projection = mp.stitchToOriginal(imgName, 6788, 6790)
+    if projection != None:
+        print imgName, projection
+
+print mp.originalToStitch("DJI_0493.JPG", 2859, 1816)
+print mp.originalToStitch("DJI_0503.JPG", 1492, 1793)
+
 
 #mp.readProjectKmlFiles("footprints copy.kml", "stitched footprint copy.kml", 2, 2)
 #

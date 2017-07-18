@@ -1,11 +1,3 @@
-speciesDict={'NOFL': 0,
-            'SAAP':'Salvia apiana',
-            'MAVU': 'Marrubium vulgare',
-            'ERTR':'Eriodictyon trichocalyx',
-            'PESP': 'Penstemon spectabilis',
-            'ACGL': 'Acmispon glaber',
-            'CRIN':'Cryptantha intermedia'}
-
 def getSpeciesandImg():
     hand=open('selectedTrainingImgs.txt', 'r')
     imgs = hand.readlines()

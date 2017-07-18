@@ -1,13 +1,14 @@
 import re
 import argparse
+from Constants import *
+import os
 
 def itFinder(yearL, monL, dayL, specL, locL):
     matches = []
-    filename = 'newFlower.txt'
-    names = open(filename, "r")
-    trainImgs = names.readlines()
-    names.close()
-    trainImgs = [x.strip() for x in trainImgs] 
+    trainImgs = os.listdir(IMAGE_PATH+'new')
+    trainImgs=list(map(lambda x:IMAGE_PATH+'new/'+x, trainImgs))
+    print(trainImgs)
+    #trainImgs = [x.strip() for x in trainImgs] 
     yearL=list(map(lambda x:str(x), yearL))
     monthL=list(map(lambda x:str(x).zfill(2), monL))
     dayL=list(map(lambda x:str(x).zfill(2), dayL))
@@ -114,3 +115,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+    

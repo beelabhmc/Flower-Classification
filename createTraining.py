@@ -66,7 +66,7 @@ def createNewResearchTraining():
         else:
             FlowerCode.append(spCode[i])
             FlowerImgs.append(imgs[i])
-    return nonFlowerImgs,nonFlowerImgs,FlowerCode,FlowerImgs
+    return nonFlowerCode,nonFlowerImgs,FlowerCode,FlowerImgs
 
 
 

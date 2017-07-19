@@ -45,8 +45,8 @@ class MappingProject:
         return originals
         
     def inRange(self, x, y, width=4000, height=3000):
-        if x >= 0 and x <= width:
-            if y >= 0 and y <= height:
+        if x >= 0 and x < width:
+            if y >= 0 and y < height:
                 return True
         return False
         
@@ -103,17 +103,17 @@ mp = MappingProject()
 #print mp.originalToStitch("DJI_0169.JPG", 1615, 1565)
 #print mp.originalToStitch("DJI_0170.JPG", 2661, 1390)
 
-print "Testing on larger testing images"
-#mp.readProjectKmlFiles("stitchTest2/footprints.kml", "stitchTest2/stitchExtended.kml", 37599, 20369)
-mp.readProjectKmlFiles("stitchTest2/footprints.kml", "stitchTest2/stitchOriginal.kml", 28909, 11771)
-for no in xrange(463, 629, 5):
-    imgName = "DJI_0" + str(no) + ".JPG"
-    projection = mp.stitchToOriginal(imgName, 6788, 6790)
-    if projection != None:
-        print imgName, projection
-
-print mp.originalToStitch("DJI_0493.JPG", 2859, 1816)
-print mp.originalToStitch("DJI_0503.JPG", 1492, 1793)
+#print "Testing on larger testing images"
+##mp.readProjectKmlFiles("stitchTest2/footprints.kml", "stitchTest2/stitchExtended.kml", 37599, 20369)
+#mp.readProjectKmlFiles("stitchTest2/footprints.kml", "stitchTest2/stitchOriginal.kml", 28909, 11771)
+#for no in xrange(463, 629, 5):
+#    imgName = "DJI_0" + str(no) + ".JPG"
+#    projection = mp.stitchToOriginal(imgName, 6788, 6790)
+#    if projection != None:
+#        print imgName, projection
+#
+#print mp.originalToStitch("DJI_0493.JPG", 2859, 1816)
+#print mp.originalToStitch("DJI_0503.JPG", 1492, 1793)
 
 
 #mp.readProjectKmlFiles("footprints copy.kml", "stitched footprint copy.kml", 2, 2)

@@ -260,6 +260,3 @@ def makePicList(numSites):
 #if __name__ == "__main__":
     
     #totalSVR(['SuperSmallTile.jpg'], [0.5], 'SmallTile.jpg', 75, 0.5)
-
-    
-    

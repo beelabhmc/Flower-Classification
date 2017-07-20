@@ -80,7 +80,7 @@ def SpeciesMapShort(species,imageName, overlap, n):
     grid_x, grid_y = numpy.mgrid[0:width, 0:height] #create a grid to interpolate over.
 
    # print(species)
-    species = [x == 3 for x in species] 
+    #species = [x == 19 for x in species] 
     species = numpy.array(species)
     data = griddata((pointsx, pointsy), species, (grid_x, grid_y), method = 'nearest')
     
@@ -93,6 +93,47 @@ def SpeciesMapShort(species,imageName, overlap, n):
     plt.imshow(mapIm)
     x = plt.colorbar(fig) #show the colorbar
     plt.savefig(IMAGEPATH_RESULTS + imageName[7:-5] + '_Classes.jpg') #Save the figure in the results folder. 
+
+
+
+'''
+def SpeciesMapShort(species,imageName, overlap, n):
+    """Similar to densMapShort except it produces a map for species."""
+    image = Image.open(imageName) #open the image
+    imageSize = image.size #get the image size. 
+    overlapSize = int(overlap*n)#Figure out how many pixels to shift by. 
+    width = imageSize[0] 
+    height = imageSize[1] 
+    rowTiles = int((width-n)/(overlapSize))+1 #calculate the number of tiles in a row. 
+        
+    pointsx = [] #initialize empty lists to hold the point location data. 
+    pointsy = []
+    for i in range(len(species)):  #find the points where species was determined
+        x = (i%rowTiles)*overlapSize + n/2
+        y = (i/rowTiles)*overlapSize + n/2
+        pointsx += [x]
+        pointsy += [y]
+    pointsx = numpy.array(pointsx) #convert points to numpy arrays for future operations. 
+    pointsy = numpy.array(pointsy)
+    #interpolation
+    grid_x, grid_y = numpy.mgrid[0:width, 0:height] #create a grid to interpolate over.
+
+   # print(species)
+    species = numpy.array(species)
+    data = griddata((pointsx, pointsy), species, (grid_x, grid_y), method = 'nearest')
+    
+    #Plotting stuff
+    #v = numpy.linspace(min(species), max(species), (max(species) - min(species)), endpoint=True)
+    fig = plt.contourf(grid_x, grid_y, data, alpha = 0.6, antialiased = True) #Plot the data overlaid with the orignial image. 
+
+    mapIm = Image.open(imageName)
+    plt.imshow(mapIm)
+    fig = plt.contourf(grid_x, grid_y, data, alpha = 0.6, antialiased = True)   
+    x = plt.colorbar(fig) #show the colorbar
+    plt.savefig(IMAGEPATH_RESULTS + imageName[7:-5] + '_Classes.jpg') #Save the figure. Change the name here or rename the file after it has been saved. 
+    #plt.show(fig)
+
+'''
 
 def classifyMap_2stage(classifier_species, classifier_flowers, speciesList, metricList,scaler,imageName, tileSize, overlap, featureSelect):
     """Classify map calculates all of the species classes for an image and produces a map 

@@ -27,7 +27,7 @@ class Mask:
             if not os.path.exists(newDir):
                 os.makedirs(newDir)
             cv2.imwrite(os.path.join(newDir, imgName), bw)
-        return bw
+        self.image = bw
 
 class CreateMaskedTraining:
     masks = {}
@@ -40,7 +40,7 @@ class CreateMaskedTraining:
     def importMP(self, mappingProject):
         self.mp = mappingProject
         
-    def readMasks(self, folderPath, save=False):
+    def readMasksFromXml(self, folderPath, save=False):
         self.masks = {}
         
         xmlPath = ""
@@ -66,10 +66,24 @@ class CreateMaskedTraining:
                 newMask.convertToBW(saveToFile=save)
                 self.masks[newMask] = species
 
-    def tiledTraining(self, mask, overlap=0.2, n=50):
-        print mask.path
-        print tiledTraining([mask.path], [self.masks[mask]], overlap, n)
-        return
+    def tiledTraining(self, original, mask, overlap=0.2, n=50):
+        mask3d = np.zeros_like(original)
+        for i in xrange(3):
+            mask3d[:, :, i] = mask.image
+            
+        x,y,w,h = cv2.boundingRect(mask.image)
+        
+        cv2.imwrite('images/maskss.jpg', mask.image)
+            
+        # apply the mask to your image
+        maskedImg = cv2.bitwise_and(original, mask3d)
+        cv2.imwrite('images/maskedImg.jpg', maskedImg)
+    
+        maskedImgCrop = maskedImg[y:(y+h), x:(x+w)]
+        cv2.imwrite('images/maskedImgCropped.jpg', maskedImgCrop)
+        
+        return tiledTraining(['images/maskedImgCropped.jpg'], [self.masks[mask]], overlap, n, qualityCheck=True)
+        
     
     def mainFunction(self):
         # find the cover
@@ -112,7 +126,8 @@ class CreateMaskedTraining:
                 # update mask
                 
             # make sliding windows for each fraction of mask
-            self.tiledTraining(mask)
+            originalImg = cv2.imread("images/Research_May15_small.jpeg")
+            self.tiledTraining(originalImg, mask)
                 
             break
 
@@ -122,7 +137,7 @@ class CreateMaskedTraining:
 
 mt = CreateMaskedTraining()
 mt.readMPFromFile("stitchTest/footprints.kml", "stitchTest/stitched footprint.kml", 2726, 2695)
-mt.readMasks("images/research_may15")
+mt.readMasksFromXml("images/research_may15")
 mt.mainFunction()
 
 #plt.plot(maskPoints[:,1], maskPoints[:,0], 'o')

@@ -9,6 +9,8 @@ import matplotlib.pyplot as plt
 import shapely
 from shapely.geometry import Polygon
 from createTraining import tiledTraining
+from PIL import Image 
+import ImageProcess as IP
 
 
 class Mask:
@@ -82,7 +84,57 @@ class CreateMaskedTraining:
         maskedImgCrop = maskedImg[y:(y+h), x:(x+w)]
         cv2.imwrite('images/maskedImgCropped.jpg', maskedImgCrop)
         
-        return tiledTraining(['images/maskedImgCropped.jpg'], [self.masks[mask]], overlap, n, qualityCheck=True)
+        ImgCrop = original[y:(y+h), x:(x+w)]
+        cv2.imwrite('images/cropped.jpg', ImgCrop)
+        
+        return self.tiledTrainingHelper(['images/maskedImgCropped.jpg'], ['images/cropped.jpg'], [self.masks[mask]], overlap, n, qualityCheck=True)
+
+
+    def tiledTrainingHelper(self, maskedList, croppedList, species, overlap, n, qualityCheck=False): 
+        """Take in a list of training images and their corresponding species. 
+        Create a new set of images through tiling and return a list 
+        of training metrics and species for each subimage.""" 
+        metricList = [] #initialize an empty list of metrics. This will be used to track metrics for each data point. 
+        speciesList = [] #initialize an empty list of species. This will be expanded to have multiple points for each photo. 
+        count = 0
+        for i in range(len(maskedList)): #for each image you are training on. 
+            imMetrics = [] #keep track of metrics for this image seperatly. 
+            maskedImg = Image.open(maskedList[i]) #load in the image.
+            croppedImg = Image.open(croppedList[i])
+            #Find the size of the image. 
+            size = maskedImg.size
+            width = size[0] #pull out length and width 
+            length = size[1] 
+            smallTileSize = int(overlap*n) #Set the tilesize and overlap you want to train on. This should match the size you will test on. 
+            # Extract all tiles using a specific overlap (overlap depends on n). This happens for each image.
+            for k in range(0,width -smallTileSize, smallTileSize): #Go through the entire image 
+                for j in range(0, length - smallTileSize, smallTileSize): 
+                    box = (k,j,k+smallTileSize, j+smallTileSize)  #edge coordinates of the current rectangle. 
+                    maskedTile = maskedImg.crop(box) #pull out the desired rectangle
+                    tile = croppedImg.crop(box)
+                    if qualityCheck:
+                        colorPixels = sum(maskedTile.point(lambda x: 1 if x else 0)
+                                        .convert("L")
+                                        .point(bool)
+                                        .getdata())
+                        if float(colorPixels) / (smallTileSize ** 2) < MASK_TRAINING_QUALITY:
+                            continue
+                        
+                           
+                                 
+                        #print count, colorPixels
+                        maskedTile.save("images/tiles/qualitytile_" + str(count) + ".jpg", "JPEG")
+                        tile.save("images/tiles/qualitytile_original_" + str(count) + ".jpg", "JPEG")
+                        count += 1
+                    
+                ### METRIC CALCULATIONS: Get the metrics for each subrectangle in the image. 
+                    Metrics = IP.getMetrics(tile) #calculate all of the metrics on this cropped out image. 
+                    imMetrics += [Metrics] #add these metrics to a list, imMetrics, that will keep track of metrics within each image. 
+            imSpecies = len(imMetrics)*[species[i]] #Extend the species list (mark all subrectangles as the same species)
+            metricList += imMetrics #add to the overall lists of metrics and species 
+            speciesList += imSpecies 
+        return metricList, speciesList #Return the overal metric and species lists. These now include subdivided portions of each image. 
+
         
     
     def mainFunction(self):

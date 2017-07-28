@@ -40,14 +40,6 @@ def tiledTraining(imList, species, overlap, n, qualityCheck=False):
                 box = (k,j,k+smallTileSize, j+smallTileSize)  #edge coordinates of the current rectangle. 
                 newImage = image.crop(box) #pull out the desired rectangle
                 
-                if qualityCheck:
-                    colorPixels = sum(newImage.point(lambda x: 255 if x else 0)
-                                    .convert("L")
-                                    .point(bool)
-                                    .getdata())
-                    if float(colorPixels) / (smallTileSize ** 2) < MASK_TRAINING_QUALITY:
-                        break
-                
             ### METRIC CALCULATIONS: Get the metrics for each subrectangle in the image. 
                 Metrics = IP.getMetrics(newImage) #calculate all of the metrics on this cropped out image. 
                 imMetrics += [Metrics] #add these metrics to a list, imMetrics, that will keep track of metrics within each image. 

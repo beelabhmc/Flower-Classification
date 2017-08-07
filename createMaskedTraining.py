@@ -99,6 +99,7 @@ class CreateMaskedTraining:
         count = 0
         for i in range(len(maskedList)): #for each image you are training on. 
             imMetrics = [] #keep track of metrics for this image seperatly. 
+            masked = cv2.imread("images/maskedImgCropped.jpg")
             maskedImg = Image.open(maskedList[i]) #load in the image.
             croppedImg = Image.open(croppedList[i])
             #Find the size of the image. 
@@ -126,10 +127,12 @@ class CreateMaskedTraining:
                         maskedTile.save("images/tiles/qualitytile_" + str(count) + ".jpg", "JPEG")
                         tile.save("images/tiles/qualitytile_original_" + str(count) + ".jpg", "JPEG")
                         count += 1
+                        cv2.rectangle(masked, (k, j), (k+smallTileSize, j+smallTileSize), (255, 0, 0), 2)
                     
                 ### METRIC CALCULATIONS: Get the metrics for each subrectangle in the image. 
                     Metrics = IP.getMetrics(tile) #calculate all of the metrics on this cropped out image. 
                     imMetrics += [Metrics] #add these metrics to a list, imMetrics, that will keep track of metrics within each image. 
+                cv2.imwrite("images/showTiles.jpg", masked)
             imSpecies = len(imMetrics)*[species[i]] #Extend the species list (mark all subrectangles as the same species)
             metricList += imMetrics #add to the overall lists of metrics and species 
             speciesList += imSpecies 

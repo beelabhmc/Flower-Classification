@@ -49,7 +49,7 @@ def itFinder(yearL, monL, dayL, specL, locL):
             respec+=speint
     else:
         respec='....'
-    regex='images\/new\/'+reyear+remonth+reday+'[\-]'+reloc+'[\-]'+respec+'\-..\.jpg'
+    regex='images\/new\/'+reyear+remonth+reday+'[\_]'+reloc+'[\_]'+respec+'\_......'
     print(regex)
     for name in trainImgs:
         a=re.match(regex, name)

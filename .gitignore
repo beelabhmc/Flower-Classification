@@ -1,7 +1,9 @@
+images/
 *.jpg
 *.jpeg
 *.png 
 *.tiff
 .DS_Store
 *.pyc
-/images/*
+*.png
+*.npy

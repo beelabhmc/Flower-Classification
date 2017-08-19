@@ -12,12 +12,14 @@ from sklearn import grid_search, datasets
 from Constants import *
 import numpy as np
 from nameParse import *
+from createMaskedTraining import CreateMaskedTraining
 
 def SpeciesTest(trainingMode):
     #input a training set - list of metrics and the corresponding species. The 2 lists must be the same length. 
     #metricTrain= [[33.411989795918366, 33.411989795918366, 33.411989795918366, 0.0, 82.525997400295523, 0.016581632653061226, 0.0], [31.682397959183675, 31.682397959183675, 31.682397959183675, 0.0, 82.525997400295523, 0.014668367346938776, 0.03125], [32.691964285714285, 32.691964285714285, 32.691964285714285, 0.0, 82.525997400295523, 0.01403061224489796, 0.03125], [32.63647959183673, 32.63647959183673, 32.63647959183673, 0.0, 82.525997400295523, 0.01211734693877551, 0.21875], [32.61224489795919, 32.61224489795919, 32.61224489795919, 0.0, 82.525997400295523, 0.012755102040816327, 0.0], [30.714923469387756, 30.714923469387756, 30.714923469387756, 0.0, 82.525997400295523, 0.008928571428571428, 0.0], [30.896045918367346, 30.896045918367346, 30.896045918367346, 0.0, 82.525997400295523, 0.01594387755102041, 0.0], [30.852040816326532, 30.852040816326532, 30.852040816326532, 0.0, 82.525997400295523, 0.01594387755102041, 0.0625], [29.049744897959183, 29.049744897959183, 29.049744897959183, 0.0, 82.525997400295523, 0.01211734693877551, 0.03125], [26.432397959183675, 26.432397959183675, 26.432397959183675, 0.0, 82.525997400295523, 0.008290816326530613, 0.25], [27.523596938775512, 27.523596938775512, 27.523596938775512, 0.0, 82.525997400295523, 0.001913265306122449, 0.0625], [27.310586734693878, 27.310586734693878, 27.310586734693878, 0.0, 82.525997400295523, 0.009566326530612245, 0.0], [26.762755102040817, 26.762755102040817, 26.762755102040817, 0.0, 82.525997400295523, 0.005739795918367347, 0.0], [31.371173469387756, 31.371173469387756, 31.371173469387756, 0.0, 82.525997400295523, 0.016581632653061226, 0.0], [29.536989795918366, 29.536989795918366, 29.536989795918366, 0.0, 82.525997400295523, 0.016581632653061226, 0.0], [26.915816326530614, 26.915816326530614, 26.915816326530614, 0.0, 82.525997400295523, 0.011479591836734694, 0.0], [27.807397959183675, 27.807397959183675, 27.807397959183675, 0.0, 82.525997400295523, 0.016581632653061226, 0.0], [28.81313775510204, 28.81313775510204, 28.81313775510204, 0.0, 82.525997400295523, 0.015306122448979591, 0.0], [26.301020408163264, 26.301020408163264, 26.301020408163264, 0.0, 82.525997400295523, 0.01020408163265306, 0.0], [27.67283163265306, 27.67283163265306, 27.67283163265306, 0.0, 82.525997400295523, 0.015306122448979591, 0.0], [28.051020408163264, 28.051020408163264, 28.051020408163264, 0.0, 82.525997400295523, 0.005739795918367347, 0.03125], [26.443877551020407, 26.443877551020407, 26.443877551020407, 0.0, 82.525997400295523, 0.01020408163265306, 0.0], [27.12563775510204, 27.12563775510204, 27.12563775510204, 0.0, 82.525997400295523, 0.011479591836734694, 0.0], [27.998086734693878, 27.998086734693878, 27.998086734693878, 0.0, 82.525997400295523, 0.008290816326530613, 0.21875], [28.012117346938776, 28.012117346938776, 28.012117346938776, 0.0, 82.525997400295523, 0.010841836734693877, 0.25], [25.68813775510204, 25.68813775510204, 25.68813775510204, 0.0, 82.525997400295523, 0.01211734693877551, 0.0], [25.45216836734694, 25.45216836734694, 25.45216836734694, 0.0, 82.525997400295523, 0.01020408163265306, 0.0], [26.017857142857142, 26.017857142857142, 26.017857142857142, 0.0, 82.525997400295523, 0.016581632653061226, 0.25], [24.292729591836736, 24.292729591836736, 24.292729591836736, 0.0, 82.525997400295523, 0.012755102040816327, 0.0], [24.325892857142858, 24.325892857142858, 24.325892857142858, 0.0, 82.525997400295523, 0.0012755102040816326, 0.0], [19.853954081632654, 19.853954081632654, 19.853954081632654, 0.0, 82.525997400295523, 0.0, 0.0], [19.130102040816325, 19.130102040816325, 19.130102040816325, 0.0, 82.525997400295523, 0.0, 0.0], [16.59502551020408, 16.59502551020408, 16.59502551020408, 0.0, 82.525997400295523, 0.0, 0.21875], [14.911989795918368, 14.911989795918368, 14.911989795918368, 0.0, 82.525997400295523, 0.0, 0.0], [14.662627551020408, 14.662627551020408, 14.662627551020408, 0.0, 82.525997400295523, 0.0, 0.0], [15.293367346938776, 15.293367346938776, 15.293367346938776, 0.0, 82.525997400295523, 0.0, 0.0], [14.072704081632653, 14.072704081632653, 14.072704081632653, 0.0, 82.525997400295523, 0.0, 0.0], [12.860969387755102, 12.860969387755102, 12.860969387755102, 0.0, 82.525997400295523, 0.0006377551020408163, 0.0], [13.991071428571429, 13.991071428571429, 13.991071428571429, 0.0, 82.525997400295523, 0.0, 0.0], [15.65625, 15.65625, 15.65625, 0.0, 82.525997400295523, 0.0, 0.0], [14.290816326530612, 14.290816326530612, 14.290816326530612, 0.0, 82.525997400295523, 0.0, 0.0], [14.454719387755102, 14.454719387755102, 14.454719387755102, 0.0, 82.525997400295523, 0.0, 0.0], [11.939413265306122, 11.939413265306122, 11.939413265306122, 0.0, 82.525997400295523, 0.0, 0.0], [12.299744897959183, 12.299744897959183, 12.299744897959183, 0.0, 82.525997400295523, 0.0, 0.0], [12.440688775510203, 12.440688775510203, 12.440688775510203, 0.0, 82.525997400295523, 0.0, 0.0], [11.645408163265307, 11.645408163265307, 11.645408163265307, 0.0, 82.525997400295523, 0.0, 0.0], [12.432397959183673, 12.432397959183673, 12.432397959183673, 0.0, 82.525997400295523, 0.0, 0.0], [13.03826530612245, 13.03826530612245, 13.03826530612245, 0.0, 82.525997400295523, 0.0, 0.0], [10.246811224489797, 10.246811224489797, 10.246811224489797, 0.0, 82.525997400295523, 0.0, 0.0], [9.606505102040817, 9.606505102040817, 9.606505102040817, 0.0, 82.525997400295523, 0.0, 0.0]]
     #speciesTrain = [1,3,2,5,2,5,4,6,3,7,4,1,5,4,3,5,7,8,4,2,5,9,7,4,3,2,7,6,8,7,6,5,6,7,9,0,5,3,1,2,3,2,5,6,0,6,0,6,0,5]
-    imageName=IMAGE_PATH+'DJI_0170.JPG'
+    imageName=IMAGE_PATH+'Research_May15_small.jpeg'
+    #imageName=IMAGE_PATH+'DJI_0162.JPG'
     #BSSImList, BSS_Train = BSSTrain()
     
     
@@ -148,6 +150,56 @@ def SpeciesTest(trainingMode):
         print >> f, list(flowerTrain)
         f.close()
         
+    if trainingMode == 7:
+        #With Masks!!
+        #Training based on segmented research area images and non0flower transect images  
+        nonFlowerSpecies,nonFlowerImgs,FlowerCode,FlowerImgs=createNewResearchTraining()
+        nonFlowerSpecies=numericalSpecies(nonFlowerSpecies) 
+        mt = CreateMaskedTraining()
+        
+        originalTestImage=IMAGE_PATH+'Research_May15_small.jpeg'
+        nonFlowerImgs = mt.readColorPNGMasks(nonFlowerImgs)
+        metricTrainTransect, speciesTrainTransect = mt.tiledTraining(originalTestImage, nonFlowerImgs, nonFlowerSpecies, n, overlap) #get training metrics for transects, non-flower only. 
+        nonFlowerSpecies = np.asarray(nonFlowerSpecies) 
+
+        #Input the segmented research area images. 
+        speciesListResearch_num = numericalSpecies(FlowerCode) #Convert to a numerical species (i.e. 1,2,3 instead of names)   
+        FlowerImgs = mt.readColorPNGMasks(FlowerImgs)
+        metricTrainResearch, speciesTrainResearch = mt.tiledTraining(originalTestImage, FlowerImgs, speciesListResearch_num, n, overlap) #get the metrics for segmented research images. 
+
+        #Now that you have all of the image, randomly choose several to use so that teh data set remains balanced. 
+        indices = np.random.choice(len(metricTrainResearch), len(metricTrainTransect)) # balance the training data
+        metricTrainResearch = np.asarray(metricTrainResearch) 
+        speciesTrainResearch = np.asarray(speciesTrainResearch)
+        metricTrainResearch = metricTrainResearch[indices] 
+        speciesTrainResearch = speciesTrainResearch[indices]
+        
+        
+        #Combine the two kinds of training data to create one comprehensive list. 
+        metricTrain = np.concatenate((metricTrainTransect, metricTrainResearch), axis = 0) #add the research data at the end of the training list for metrics. 
+        speciesTrain = np.concatenate((speciesTrainTransect, speciesTrainResearch), axis = 0)
+        
+            
+        flowerTrain = [1 if i else 0 for i in speciesTrain] #create a list of species training that only denotes flower vs. non-flower 
+        #Save all of the training data to files so that it can be read in without calculation in the future. 
+        ### Save the training set - metrics 
+#        f = open('metricTrainFull.txt', 'w')
+#        print >> f, list(metricTrain)
+#        f.close()
+#
+#        ### Save the training set - species 
+#        f = open('speciesTrainFull.txt', 'w')
+#        print >> f, list(speciesTrain)
+#        f.close()
+
+        np.save('metricTrainFull', metricTrain)
+        np.save('speciesTrainFull', speciesTrain)
+#        
+        ### Save the training set - flower vs. non-flower 
+        f = open('FlowerTrainFull.txt', 'w')
+        print >> f, list(flowerTrain)
+        f.close()
+        
     if trainingMode == 6: 
         #f = open('metricTrainFull.txt', 'r') 
         #data = f.read() 
@@ -165,6 +217,7 @@ def SpeciesTest(trainingMode):
         flowerTrain = eval(data)
 
         speciesTrain = [int(i) for i in speciesTrain]
+        
     #Training data has been acquired. Scale the metrics.
     metricTrain = np.asarray(metricTrain) 
     scaledMetrics, scaler = scaleMetrics(metricTrain) #scale the metrics and return both the scaled metrics and the scaler used. 
@@ -198,6 +251,6 @@ def parameterSearch():
     clf.fit(iris.data, iris.target)
     return clf
 
-# Allows us to simply run SpeciesTest without needing to load it in first.
-#if __name__ == '__main__':
-#        species = SpeciesTest(6) #currently running with training mode five. 
+#Allows us to simply run SpeciesTest without needing to load it in first.
+if __name__ == '__main__':
+        species = SpeciesTest(7) #currently running with training mode five. 

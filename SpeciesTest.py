@@ -12,7 +12,7 @@ from sklearn import grid_search, datasets
 from Constants import *
 import numpy as np
 from nameParse import *
-from createMaskedTraining import CreateMaskedTraining
+from CreateMaskedTraining import CreateMaskedTraining
 
 def SpeciesTest(trainingMode):
     #input a training set - list of metrics and the corresponding species. The 2 lists must be the same length. 

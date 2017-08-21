@@ -221,7 +221,9 @@ class CreateMaskedTraining:
     def mainFunction(self):
         """
         NOTE: this is an unfinished function.
-        This function tries to break a masked stitch into a bunch of original images.
+        This function contains a flow to 
+            1) break a masked stitch into a slices from theZz original images.
+            2) generate training data from the original image slices.
             
         Prereq:
             self.readMP() and self.readMasksFromXml() need to be called

@@ -1,0 +1,15 @@
+channels:
+  - anaconda
+  - nodefaults
+dependencies:
+  - python=3
+  - scikit-learn=0.17.1
+  - numpy=1.11.2
+  - matplotlib=1.5.3
+  - pillow=3.3.1
+  - scipy=0.18.1
+  - pyopengl
+  - scikit-image=0.12.3
+  - pip
+  - pip:
+    - opencv-contrib-python

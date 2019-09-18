@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 #This script is written to speed up the testing of species classification code. 
 from classification import *
 from SpeciesClassProbability import *
@@ -105,7 +106,7 @@ def SpeciesTest(trainingMode):
         flowerTrain = [1 if i else 0 for i in speciesTrain]
     if trainingMode == 5: 
         
-        #Training based on segmented research area images and non0flower transect images  
+        #Training based on segmented research area images and non-flower transect images  
         #imListResearch, coordLeft, coordRight, speciesListResearch, numFlowers = createAllResearchTraining()
         nonFlowerSpecies,nonFlowerImgs,FlowerCode,FlowerImgs=createNewResearchTraining()
         nonFlowerSpecies=numericalSpecies(nonFlowerSpecies) 
@@ -165,6 +166,7 @@ def SpeciesTest(trainingMode):
         flowerTrain = eval(data)
 
         speciesTrain = [int(i) for i in speciesTrain]
+
     #Training data has been acquired. Scale the metrics.
     metricTrain = np.asarray(metricTrain) 
     scaledMetrics, scaler = scaleMetrics(metricTrain) #scale the metrics and return both the scaled metrics and the scaler used. 
@@ -199,5 +201,5 @@ def parameterSearch():
     return clf
 
 # Allows us to simply run SpeciesTest without needing to load it in first.
-#if __name__ == '__main__':
-#        species = SpeciesTest(6) #currently running with training mode five. 
+if __name__ == '__main__':
+    species = SpeciesTest(5) #currently running with training mode five. 

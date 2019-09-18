@@ -42,7 +42,7 @@ def densMap(fit, metricArray, n, overlap, imageSize, imageName):
         input fit function, metrics, and image size characteristics."""
         
     if True: #Make true if you want to calculate densities (i.e. if you have a new fit/new density list)  
-        print 'calculating densities'
+        print('calculating densities')
         if type(fit)==sklearn.gaussian_process.gaussian_process.GaussianProcess: #If the fit is Gaussian
             densities, MSE = fit.predict(metricArray, eval_MSE =True)
             sigma = numpy.sqrt(MSE)
@@ -51,7 +51,7 @@ def densMap(fit, metricArray, n, overlap, imageSize, imageName):
             densities = fit.predict(metricArray) #Use the ML fit to predict the density for each tile 
             #print len(densities)
         f = open('densities.txt', 'w')
-        print >> f, list(densities)
+        print(list(densities), file=f)
         f.close()
     else: 
         f = open('densities.txt', 'r')
@@ -74,7 +74,7 @@ def densMap(fit, metricArray, n, overlap, imageSize, imageName):
     #print 'height ', height
     overlapSize = int(overlap*n)
     rowTiles = int((width-n)/(overlapSize))+1
-    print 'Row Tiles is ', rowTiles
+    print('Row Tiles is ', rowTiles)
     #colTiles = int(((height-n)/(overlapSize))+1)
     
     
@@ -98,7 +98,7 @@ def densMap(fit, metricArray, n, overlap, imageSize, imageName):
    # print('Densities is ', densities)
     data = griddata(points, densities, (grid_x, grid_y), method = 'linear') #interpolate to get continuous function of points 
     #can change interpolation method
-    print data.size
+    print(data.size)
 
   #  print 'Max is ', numpy.amax(data)
    # min_max_scaler = sklearn.preprocessing.MinMaxScaler()
@@ -117,7 +117,7 @@ def densMap(fit, metricArray, n, overlap, imageSize, imageName):
     mapIm = Image.open(imageName)
     plt.imshow(mapIm)
     maxDens = max(densities)
-    print maxDens  
+    print(maxDens)  
     x = plt.colorbar(fig)   
     plt.savefig('ContourPlot.jpg')
     return data
@@ -156,7 +156,7 @@ def testDensMap(n, overlap, imageName):
     width = imageSize[0]
     overlapSize = int(n*overlap)
    # rowTiles = math.ceil((width-n)/(overlapSize))
-    print imageSize
+    print(imageSize)
     for i in range(n/2, imageSize[1], int(overlap*n)): #For the entire height of the picture 
        # print 'row number ', i
         #for j in range(0,imageSize[0]/2,int(overlap*n)): #For the first third of the image 
@@ -172,7 +172,7 @@ def testDensMap(n, overlap, imageName):
 
          #   print 'k ', k
    # print 'Densities are ', densities 
-    print 'Densities computed! Plotting now...'
+    print('Densities computed! Plotting now...')
     densMapShort(densities, imageName,overlap,n) 
     
 def overlayMap(mapName, contourName): 

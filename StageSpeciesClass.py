@@ -3,9 +3,9 @@ from Constants import *
 import numpy as np
 #No probabilities included 
 
-def oneSpeciesOverlap_2stage((i,j), n, imageName, overlap, subTileDict, fit_species, fit_flowers, scaler, reduceFeatures, featureSelect): 
+def oneSpeciesOverlap_2stage(i, n, imageName, overlap, subTileDict, fit_species, fit_flowers, scaler, reduceFeatures, featureSelect): 
     """Computes the species of one tile with overlap""" 
-    #Note that this algorithm assumes 1/overlap is an integer 
+    (i,j) = i
     shiftSize = int(n*overlap)
     #How many subtiles are in the width of the image? 
     numTiles =int( 1/overlap )

@@ -28,25 +28,25 @@ def GetTrainingMetrics(imageName, trainingType, densityList):
     if trainingType == 0: ###You want to pull data from a transect picture. 
         
         #Get user inputs to determine the transect image being used, and the start and end coordinates of the transect. 
-        TransectName = input("Please input the transect image name as a string:" )
-        Start = input("Please input the coordinates at the START of the transect:")
-        End = input("Please input the coordinates at the END of the transect:")
+        TransectName = eval(input("Please input the transect image name as a string:" ))
+        Start = eval(input("Please input the coordinates at the START of the transect:"))
+        End = eval(input("Please input the coordinates at the END of the transect:"))
 
         #Based on those user inputs create a list of transect images 
         imageList = DensityAlignment.divideTransect(Start, End,TransectName) ## Divide the transect into 50 images. Store in a list. 
-        print len(imageList)
+        print(len(imageList))
         
         ##Compute the metrics on each training image. 
         metricList, densityList = allTrainMetricsTransect(imageList, densityList)
         
         ### Save the training set  - metrics
         f = open('metricListTraining.txt', 'w')
-        print >> f, list(metricList)
+        print(list(metricList), file=f)
         f.close()
         
         ### Save the training set - densities 
         f = open('densityListTraining.txt', 'w')
-        print >> f, densityList 
+        print(densityList, file=f) 
         f.close()
         
     if trainingType == 1:  ##pull in pictures titled '1.jpg', etc. 
@@ -57,12 +57,12 @@ def GetTrainingMetrics(imageName, trainingType, densityList):
         
         ### Save the training set  - metrics
         f = open('metricListTraining.txt', 'w')
-        print >> f, list(metricList)
+        print(list(metricList), file=f)
         f.close()
         
         ### Save the training set - densities 
         f = open('densityListTraining.txt', 'w')
-        print >> f, densityList 
+        print(densityList, file=f) 
         f.close()        
             
         
@@ -160,7 +160,7 @@ def classReport(metricTrain, speciesTrain, clf):
     y_true = speciesTrain #This is the actual classes 
     y_pred = clf.predict(metricTrain) #The classes predicted by the classifier. 
 #    print(y_pred)
-    print(classification_report(y_true, y_pred)) #print out the full report of performance by class. 
+    print((classification_report(y_true, y_pred))) #print out the full report of performance by class. 
 
 def classReport_2stage(metricTrain, speciesTrain, clf_flower, clf_species): 
     y_true = speciesTrain
@@ -174,7 +174,7 @@ def classReport_2stage(metricTrain, speciesTrain, clf_flower, clf_species):
         else: 
             y_pred += [flower]
     y_pred = [int(k) for k in y_pred]
-    print(classification_report(y_true, y_pred))
+    print((classification_report(y_true, y_pred)))
     return y_true, y_pred
 
 def getConfusionMatrix(metricTrain, speciesTrain, clf_flower, clf_species): 
@@ -209,12 +209,12 @@ def testFeatures(thresh, kfeatures):
         
         ### Save the training set  - metrics
         f = open('TransectMetricTraining.txt', 'w')
-        print >> f, list(metricTrain)
+        print(list(metricTrain), file=f)
         f.close()
                 
         ### Save the training set - densities 
         f = open('TransectSpeciesTraining.txt', 'w')
-        print >> f, list(speciesTrain)
+        print(list(speciesTrain), file=f)
         f.close()
     if 0: 
         f = open('TransectMetricTraining.txt', 'r') 

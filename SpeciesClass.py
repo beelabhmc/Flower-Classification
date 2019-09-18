@@ -2,9 +2,9 @@ from ImageProcess import * #Import the same functions from image process for den
 from Constants import *
 #No probabilities included 
 
-def oneSpeciesOverlap((i,j), n, imageName, overlap, subTileDict, fit, scaler, reduceFeatures, featureSelect): 
+def oneSpeciesOverlap(i, n, imageName, overlap, subTileDict, fit, scaler, reduceFeatures, featureSelect): 
     """Computes the species of one tile with overlap""" 
-    #Note that this algorithm assumes 1/overlap is an integer 
+    (i,j) = i
     shiftSize = int(n*overlap)
     #How many subtiles are in the width of the image? 
     numTiles =int( 1/overlap )
@@ -13,7 +13,7 @@ def oneSpeciesOverlap((i,j), n, imageName, overlap, subTileDict, fit, scaler, re
         for m in range(numTiles): 
            # print (k,m)
             newMetrics = subTileDict[(i + m*shiftSize, j + k*shiftSize)]
-            metricTotal = map(add, metricTotal, newMetrics)
+            metricTotal = list(map(add, metricTotal, newMetrics))
   #  print metricTotal
     num = 1/(overlap**2)
     avgMetric = [a/num for a in metricTotal] #Compute the average 
@@ -22,7 +22,7 @@ def oneSpeciesOverlap((i,j), n, imageName, overlap, subTileDict, fit, scaler, re
     if reduceFeatures: 
         newMetric = featureSelect.transform(scaledMetric)
     species = fit.predict(newMetric) #Find which species this is. 
-    print type(species)
+    print(type(species))
     #speciesProb = fit.predict_proba(scaledMetric) #Calculate the probability of the species. 
    # return list(species), list(speciesProb) #return species and matching prob of those species. 
     return list(species)

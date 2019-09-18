@@ -72,7 +72,7 @@ def allMetrics(dictionary,n, im, overlap):
                 for m in range(j, j+n-overlapSize+1, overlapSize): 
                     #pull out metrics 
                     metrics = dictionary[(k,m)]
-                    #print metrics 
+                    #print(metrics )
                     metricTotals = map(add, metricTotals, metrics) 
             ##Averaging metrics 
             num = 1/(overlap**2)
@@ -81,7 +81,7 @@ def allMetrics(dictionary,n, im, overlap):
             ##Put all metrics metrics in an array. One metric per row. 
             for index in range(len(metricTotals)): 
                 metricArray[index,int(i/(overlap*n) + j*(width-n)/((overlap*n)**2))] = newMetric[index] 
-    #print metricArray 
+    #print(metricArray )
     return metricArray 
                 
 def calcMetrics(imageName, tileSize, overlap): 
@@ -118,8 +118,9 @@ def scaleMetrics(metricArray):
 
 
 
-def oneDensOverlap((i,j), n, imageName, overlap, subTileDict, fit, scaler): 
+def oneDensOverlap(i, n, imageName, overlap, subTileDict, fit, scaler): 
     """Computes the density of one tile with overlap""" 
+    i,j=i
     #Note that this algorithm assumes 1/overlap is an integer 
     shiftSize = int(n*overlap)
     #How many subtiles are in the width of the image? 
@@ -165,8 +166,8 @@ def trainMetrics(imageName, density):
 def allTrainMetrics(imageList, densityList): 
     """Similar to train metrics, but takes in a series of images stored in a list and calculates metrics for all of them."""
     metricsList = []
-    print 'images ', imageList 
-    print 'densityList ', densityList
+    print('images ', imageList )
+    print('densityList ', densityList)
     for i in range(len(imageList)): 
         imageName = imageList[i]
         [metrics, density] = trainMetrics(imageName, densityList[i]) 
@@ -268,7 +269,7 @@ def textureAnalysis(im):
     # calculate the percentage of high texture grids
     
     if width/n == 0: #if width is less than n something is wrong! Check the width and make sure n is a reasonable value. 
-        print width
+        print(width)
         raw_input('Oops')
     return float(count)/((width/n)*(height/n))
     
@@ -296,7 +297,8 @@ def findYellowFast(im):
     portion = float(count)/totalPix
     return portion
     
-def getHSV((r,g,b)): 
+def getHSV(colors): 
+    r,g,b=colors
     return rgb_to_hsv(r/255., g/255., b/255.)
     
 def GLCM(im):

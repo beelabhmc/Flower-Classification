@@ -69,12 +69,12 @@ def totalSVR(densityList, imageName,tileSize, overlap, trainingType):
         
         ### Save the training set  - metrics
         f = open('metricListTraining.txt', 'w')
-        print >> f, list(metricList)
+        print(list(metricList), file=f)
         f.close()
         
         ### Save the training set - densities 
         f = open('densityListTraining.txt', 'w')
-        print >> f, densityList 
+        print(densityList, file=f) 
         f.close()
         
     if trainingType == 1:  ##pull in pictures titled '1.jpg', etc. 
@@ -96,12 +96,12 @@ def totalSVR(densityList, imageName,tileSize, overlap, trainingType):
         
         ### Save the training set  - metrics
         f = open('metricListTraining.txt', 'w')
-        print >> f, list(metricList)
+        print(list(metricList), file=f)
         f.close()
         
         ### Save the training set - densities 
         f = open('densityListTraining.txt', 'w')
-        print >> f, densityList 
+        print(densityList, file=f) 
         f.close()        
         
     if trainingType == 2:  #Just read in old data that was already saved.
@@ -125,7 +125,7 @@ def totalSVR(densityList, imageName,tileSize, overlap, trainingType):
     ### Train the machine learning algorithm 
     fit = svrAlg(scaledTraining, densityList)  #fit the algorithm 
     
-    print 'Machine Learning done'
+    print('Machine Learning done')
     
     ###Calculate densities on full image 
     
@@ -133,7 +133,7 @@ def totalSVR(densityList, imageName,tileSize, overlap, trainingType):
         imageDens = allDensOverlap(tileSize, imageName, overlap, densityList, metricList, fit, scaler)
         fileName = imageName[0:-4] + 'Densities' +  '.txt'
         f = open(fileName, 'w')
-        print >> f, list(imageDens)
+        print(list(imageDens), file=f)
         f.close()
     else: 
         fileName = imageName[0:-4] + 'Densities' +  '.txt'
@@ -141,7 +141,7 @@ def totalSVR(densityList, imageName,tileSize, overlap, trainingType):
         data = f.read()
         imageDens = eval(data)
 
-    print 'Image densities computed'
+    print('Image densities computed')
     densMapShort(imageDens,imageName, overlap, tileSize)
 
 def totalGauss(densityList, imageName,tileSize, overlap, trainingType): 
@@ -158,7 +158,7 @@ def totalGauss(densityList, imageName,tileSize, overlap, trainingType):
     
                   
     if trainingType == 0: ###You want to pull data from a transect picture. 
-        print 'Using single transect data for training'
+        print('Using single transect data for training')
         trainingData = numpy.zeros(50) ##Initialize the array to hold densities 
         
         ##Manually change densities where flowers existed here. All other entries will be 0. 
@@ -180,12 +180,12 @@ def totalGauss(densityList, imageName,tileSize, overlap, trainingType):
         
         ### Save the training set  - metrics
         f = open('metricListTraining.txt', 'w')
-        print >> f, list(metricList)
+        print(list(metricList), file=f)
         f.close()
         
         ### Save the training set - densities 
         f = open('densityListTraining.txt', 'w')
-        print >> f, densityList 
+        print(densityList, file=f) 
         f.close()
         
     if trainingType == 1:  ##pull in pictures titled '1.jpg', etc. 
@@ -196,12 +196,12 @@ def totalGauss(densityList, imageName,tileSize, overlap, trainingType):
         
         ### Save the training set  - metrics
         f = open('metricListTraining.txt', 'w')
-        print >> f, list(metricList)
+        print(list(metricList), file=f)
         f.close()
         
         ### Save the training set - densities 
         f = open('densityListTraining.txt', 'w')
-        print >> f, densityList 
+        print(densityList, file=f) 
         f.close()        
         
     if trainingType == 2: 
@@ -229,7 +229,7 @@ def totalGauss(densityList, imageName,tileSize, overlap, trainingType):
     fit = gaussReg(scaledTraining, densityList)  ## Fit using Gaussian Regression
     
     
-    print 'Machine Learning done'
+    print('Machine Learning done')
     
     ###Calculate densities on full image 
     
@@ -237,7 +237,7 @@ def totalGauss(densityList, imageName,tileSize, overlap, trainingType):
         imageDens = allDensOverlap(tileSize, imageName, overlap, densityList, metricList, fit, scaler)
         fileName = imageName[0:-4] + 'Densities' +  '.txt'
         f = open(fileName, 'w')
-        print >> f, list(imageDens)
+        print(list(imageDens), file=f)
         f.close()
     else: 
         fileName = imageName[0:-4] + 'Densities' +  '.txt'
@@ -245,7 +245,7 @@ def totalGauss(densityList, imageName,tileSize, overlap, trainingType):
         data = f.read()
         imageDens = eval(data)
 
-    print 'Image densities computed'
+    print('Image densities computed')
     densMapShort(imageDens,imageName, overlap, tileSize)
  
     

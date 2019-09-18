@@ -1,9 +1,9 @@
 from ImageProcess import * #Import the same functions from image process for density stuff. 
 from Constants import *
 
-def oneSpeciesOverlap((i,j), n, imageName, overlap, subTileDict, fit, scaler): 
+def oneSpeciesOverlap(i, n, imageName, overlap, subTileDict, fit, scaler): 
     """Computes the density of one tile with overlap""" 
-    #Note that this algorithm assumes 1/overlap is an integer 
+    (i,j) = i
     shiftSize = int(n*overlap)
     #How many subtiles are in the width of the image? 
     numTiles =int( 1/overlap )
@@ -12,7 +12,7 @@ def oneSpeciesOverlap((i,j), n, imageName, overlap, subTileDict, fit, scaler):
         for m in range(numTiles): 
            # print (k,m)
             newMetrics = subTileDict[(i + m*shiftSize, j + k*shiftSize)]
-            metricTotal = map(add, metricTotal, newMetrics)
+            metricTotal = list(map(add, metricTotal, newMetrics))
   #  print metricTotal
     num = 1/(overlap**2)
     avgMetric = [a/num for a in metricTotal] #Compute the average 
@@ -137,6 +137,6 @@ def classifyMapProb(classifier, speciesList, metricList,scaler, SPECIES):
           #  print(Prob[i])
             ProbList = Prob[i] 
             Prob[i] = ProbList[SPECIES]
-            print(Prob[i])
+            print((Prob[i]))
     SingleSpeciesProbMap(Prob, "0015_Cassie.JPG", 0.2, 50)  #Map the probabilities  
     return

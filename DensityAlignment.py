@@ -159,5 +159,5 @@ def main():
    
     stuff= divideTransect(Start, End, imageName)
     if len(stuff) != 50: 
-        print "Error! Transect length is not 50 meters." 
+        print("Error! Transect length is not 50 meters.") 
     return stuff

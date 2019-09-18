@@ -38,12 +38,12 @@ def SpeciesTest(trainingMode):
         
         ### Save the training set  - metrics
         f = open('TransectMetricTraining.txt', 'w')
-        print >> f, list(metricTrain)
+        print(list(metricTrain), file=f)
         f.close()
                 
         ### Save the training set - densities 
         f = open('TransectSpeciesTraining.txt', 'w')
-        print >> f, list(speciesTrain)
+        print(list(speciesTrain), file=f)
         f.close()
     if trainingMode == 2: 
         f = open('TransectMetricTraining.txt', 'r') 
@@ -60,12 +60,12 @@ def SpeciesTest(trainingMode):
         
         ### Save the training set  - metrics
         f = open('RADMetricTraining.txt', 'w')
-        print >> f, list(metricTrainResearch)
+        print(list(metricTrainResearch), file=f)
         f.close()
                 
         ### Save the training set - densities 
         f = open('RADSpeciesTraining.txt', 'w')
-        print >> f, list(speciesTrainResearch)
+        print(list(speciesTrainResearch), file=f)
         f.close()
         
         FullImList, FullSpeciesList = createAllTransectTraining()
@@ -80,17 +80,17 @@ def SpeciesTest(trainingMode):
         
         ### Save the training set  - metrics
         f = open('TransectTrainSpecies.txt', 'w')
-        print >> f, list(metricTrain)
+        print(list(metricTrain), file=f)
         f.close()
                 
         ### Save the training set - densities 
         f = open('TransectTrainSpecies.txt', 'w')
-        print >> f, list(speciesTrain)
+        print(list(speciesTrain), file=f)
         f.close()
         
         ### Save the training set - flower vs. non-flower 
         f = open('FlowerTrain.txt', 'w')
-        print >> f, list(flowerTrain)
+        print(list(flowerTrain), file=f)
         f.close()
 
     if trainingMode == 4: 
@@ -145,7 +145,7 @@ def SpeciesTest(trainingMode):
 #        
         ### Save the training set - flower vs. non-flower 
         f = open('FlowerTrainFull.txt', 'w')
-        print >> f, list(flowerTrain)
+        print(list(flowerTrain), file=f)
         f.close()
         
     if trainingMode == 6: 
@@ -173,7 +173,7 @@ def SpeciesTest(trainingMode):
     clf_flower = classifyKNN(newMetrics, flowerTrain) #fit
     #Train the classifier (or classifiers in a 2 stage process). 
      #fit a function that only considers flower vs. non-flower 
-    print(len(newMetrics[0]))
+    print((len(newMetrics[0])))
     #Find all of the zero training points in the set. 
     flower_locations = numpy.nonzero(speciesTrain) #Find all of the nonzero (i.e. actually flower) elements 
     speciesTrain = np.asarray(speciesTrain) #convert to a numpy array. 
